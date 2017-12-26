@@ -1,7 +1,25 @@
 #pragma once
 
+#include "Board.h"
+
+class Configuration;
+
 class Computer {
 public:
-	Computer();
-	~Computer();
+	Computer(const Configuration& configuration);
+
+	void runLoop();
+	void initialise();
+
+private:
+	enum {
+		DisplayScale = 2,
+		RasterWidth = 256,
+		RasterHeight = 224,
+		ScreenWidth = RasterWidth * DisplayScale,
+		ScreenHeight = RasterHeight * DisplayScale,
+	};
+
+	const Configuration& m_configuration;
+	mutable Board m_board;
 };

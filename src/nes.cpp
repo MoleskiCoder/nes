@@ -11,20 +11,11 @@ int main(int, char*[])
 	configuration.setDebugMode(true);
 	configuration.setProfileMode(true);
 #endif
-	//configuration.setDebugMode(true);
-	//configuration.setProfileMode(true);
-	//configuration.setDrawGraphics(false);
 
-	//Computer computer(configuration);
-	//computer.initialise();
+	Computer computer(configuration);
+	computer.initialise();
 
-	//try {
-	//	computer.runLoop();
-	//}
-	//catch (const std::exception& error) {
-	//	::SDL_LogError(::SDL_LOG_CATEGORY_APPLICATION, "%s", error.what());
-	//	return 2;
-	//}
+	computer.runLoop();
 
 	return 0;
 }

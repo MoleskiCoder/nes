@@ -69,20 +69,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\libraries\EightBit\inc;C:\Libraries\SDL2-2.0.7\include;C:\Libraries\boost_1_65_1;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\SDL2-2.0.7\lib\$(PlatformShortName);$(LibraryPath)</LibraryPath>
+    <IncludePath>..\libraries\EightBit\Ricoh2A03\inc;..\libraries\EightBit\M6502\inc;..\libraries\EightBit\inc;C:\Libraries\SDL2-2.0.7\include;C:\Libraries\boost_1_65_1;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\SDL2-2.0.7\lib\$(PlatformShortName);C:\Libraries\boost_1_65_1\lib32-msvc-14.1;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\libraries\EightBit\inc;C:\Libraries\SDL2-2.0.7\include;C:\Libraries\boost_1_65_1;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\SDL2-2.0.7\lib\$(PlatformShortName);$(LibraryPath)</LibraryPath>
+    <IncludePath>..\libraries\EightBit\Ricoh2A03\inc;..\libraries\EightBit\M6502\inc;..\libraries\EightBit\inc;C:\Libraries\SDL2-2.0.7\include;C:\Libraries\boost_1_65_1;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\SDL2-2.0.7\lib\$(PlatformShortName);C:\Libraries\boost_1_65_1\lib32-msvc-14.1;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\libraries\EightBit\inc;C:\Libraries\SDL2-2.0.7\include;C:\Libraries\boost_1_65_1;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\SDL2-2.0.7\lib\$(PlatformShortName);$(LibraryPath)</LibraryPath>
+    <IncludePath>..\libraries\EightBit\Ricoh2A03\inc;..\libraries\EightBit\M6502\inc;..\libraries\EightBit\inc;C:\Libraries\SDL2-2.0.7\include;C:\Libraries\boost_1_65_1;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\SDL2-2.0.7\lib\$(PlatformShortName);C:\Libraries\boost_1_65_1\lib64-msvc-14.1;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\libraries\EightBit\inc;C:\Libraries\SDL2-2.0.7\include;C:\Libraries\boost_1_65_1;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\SDL2-2.0.7\lib\$(PlatformShortName);$(LibraryPath)</LibraryPath>
+    <IncludePath>..\libraries\EightBit\Ricoh2A03\inc;..\libraries\EightBit\M6502\inc;..\libraries\EightBit\inc;C:\Libraries\SDL2-2.0.7\include;C:\Libraries\boost_1_65_1;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\SDL2-2.0.7\lib\$(PlatformShortName);C:\Libraries\boost_1_65_1\lib64-msvc-14.1;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -92,6 +92,9 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -101,6 +104,9 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -115,6 +121,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,11 +137,14 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Board.cpp" />
     <ClCompile Include="Computer.cpp" />
     <ClCompile Include="nes.cpp" />
+    <ClCompile Include="NesFile.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -143,9 +153,22 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Board.h" />
     <ClInclude Include="Computer.h" />
     <ClInclude Include="Configuration.h" />
+    <ClInclude Include="NesFile.h" />
     <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libraries\EightBit\M6502\src\M6502.vcxproj">
+      <Project>{d8726a1b-bbfe-47ef-9860-26b90140ba66}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\libraries\EightBit\Ricoh2A03\src\Ricoh2A03.vcxproj">
+      <Project>{ccf67510-c3bd-40fd-bf13-9fa9b9bcfe43}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\libraries\EightBit\src\EightBit.vcxproj">
+      <Project>{a9c24bd9-0cb4-4c84-b09b-46b815f9da47}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
