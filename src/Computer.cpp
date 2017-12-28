@@ -17,6 +17,9 @@ void Computer::runLoop() {
 	cpu.powerOn();
 
 	cpu.PC().word = 0xC000;	// Hack!!
+	cpu.X() = 0x00;			// Hack!!
+	cpu.P() |= 0x04;		// Hack!!
+	cpu.S() = 0xFD;			// Hack!!
 
 	auto cycles = 0;
 	while (cpu.powered()) {

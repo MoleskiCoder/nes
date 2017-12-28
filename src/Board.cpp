@@ -41,16 +41,22 @@ void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
 	auto address = CPU().PC().word;
 	auto cell = peek(address);
 
-	std::cout << std::hex;
-	std::cout << "PC=" << std::setw(4) << std::setfill('0') << address << ":";
-	std::cout << "P=" << m_disassembler.dump_Flags(CPU().P()) << ", ";
-	std::cout << std::setw(2) << std::setfill('0');
-	std::cout << "A=" << (int)CPU().A() << ", ";
-	std::cout << "X=" << (int)CPU().X() << ", ";
-	std::cout << "Y=" << (int)CPU().Y() << ", ";
-	std::cout << "S=" << (int)CPU().S() << "\t";
-
+	std::cout << m_disassembler.dump_WordValue(address);
+	std::cout << "  ";
 	std::cout << m_disassembler.disassemble(address);
 
+	std::cout << "\t\t";
+
+	std::cout << "A:" << m_disassembler.dump_ByteValue(CPU().A()) << " ";
+	std::cout << "X:" << m_disassembler.dump_ByteValue(CPU().X()) << " ";
+	std::cout << "Y:" << m_disassembler.dump_ByteValue(CPU().Y()) << " ";
+	std::cout << "P:" << m_disassembler.dump_ByteValue(CPU().P()) << " ";
+	std::cout << "SP:" << m_disassembler.dump_ByteValue(CPU().S()) << " ";
+
+	//std::cout << "CYC:" << CPU().
 	std::cout << "\n";
+
+	//// Test results
+	//std::cout << "0x02=" << (int)peek(0x02) << ", ";
+	//std::cout << "0x03=" << (int)peek(0x03) << ", ";
 }
