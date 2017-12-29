@@ -17,11 +17,12 @@
 class Board : public EightBit::Bus {
 public:
 	enum {
-		CyclesPerSecond = 4 * 1024 * 1024,
-		FramesPerSecond = 60,
-		CyclesPerFrame = CyclesPerSecond / FramesPerSecond,
-		TotalLineCount = 154,
-		CyclesPerLine = CyclesPerFrame / TotalLineCount,
+		MasterClockSpeed = 21477272,
+		CPUClockSpeed = 1789773,		// ~ MasterClockSpeed / 12
+		PPUClockSpeed = 5369319,		// ~ CPUClockSpeed * 3
+
+		PPUCyclesPerCPUCycle = 3,
+		PPUCyclesPerScanLine = 341,
 	};
 
 	Board(const Configuration& configuration);
@@ -42,9 +43,12 @@ private:
 	EightBit::Symbols m_symbols;
 	EightBit::Disassembly m_disassembler;
 
+	int m_totalCPUCycles = 0;
+
 	const Configuration& m_configuration;
 
 	void loadRom(const std::string& path);
 
 	void Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu);
+	void Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu);
 };

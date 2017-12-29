@@ -13,6 +13,7 @@ Board::Board(const Configuration& configuration)
   m_configuration(configuration) {
 	if (m_configuration.isDebugMode())
 		CPU().ExecutingInstruction.connect(std::bind(&Board::Cpu_ExecutingInstruction_Debug, this, std::placeholders::_1));
+	CPU().ExecutedInstruction.connect(std::bind(&Board::Cpu_ExecutedInstruction, this, std::placeholders::_1));
 }
 
 void Board::initialise() {
@@ -53,10 +54,14 @@ void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
 	std::cout << "P:" << m_disassembler.dump_ByteValue(CPU().P()) << " ";
 	std::cout << "SP:" << m_disassembler.dump_ByteValue(CPU().S()) << " ";
 
-	//std::cout << "CYC:" << CPU().
+	std::cout << "CYC:" << std::setw(3) << std::setfill(' ') << (m_totalCPUCycles * PPUCyclesPerCPUCycle) % PPUCyclesPerScanLine;
 	std::cout << "\n";
 
 	//// Test results
 	//std::cout << "0x02=" << (int)peek(0x02) << ", ";
 	//std::cout << "0x03=" << (int)peek(0x03) << ", ";
+}
+
+void Board::Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu) {
+	m_totalCPUCycles += CPU().clockCycles();
 }
