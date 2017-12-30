@@ -55,7 +55,7 @@ void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
 	std::cout << "SP:" << m_disassembler.dump_ByteValue(CPU().S()) << " ";
 
 	std::cout << "CYC:" << std::setw(3) << std::setfill(' ') << (m_totalCPUCycles * PPUCyclesPerCPUCycle) % PPUCyclesPerScanLine;
-	std::cout << "\n";
+	std::cout << std::endl;
 
 	//// Test results
 	//std::cout << "0x02=" << (int)peek(0x02) << ", ";
