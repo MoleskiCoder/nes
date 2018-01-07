@@ -28,13 +28,14 @@ void Board::reset() {
 
 uint8_t& Board::reference(uint16_t address, bool& rom) {
 	rom = false;
-	return RAM().reference(address);
+	if (address < 0xc000)
+		return RAM().reference(address);
+	rom = true;
+	return m_cartridge.PRG()[0][address - 0xc000];
 }
 
 void Board::loadRom(const std::string& path) {
-	NesFile cartridge;
-	cartridge.load(path);
-	RAM().load(cartridge.PRG()[0], 0xC000);
+	m_cartridge.load(path);
 }
 
 void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
@@ -55,11 +56,8 @@ void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
 	std::cout << "SP:" << m_disassembler.dump_ByteValue(CPU().S()) << " ";
 
 	std::cout << "CYC:" << std::setw(3) << std::setfill(' ') << (m_totalCPUCycles * PPUCyclesPerCPUCycle) % PPUCyclesPerScanLine;
-	std::cout << std::endl;
 
-	//// Test results
-	//std::cout << "0x02=" << (int)peek(0x02) << ", ";
-	//std::cout << "0x03=" << (int)peek(0x03) << ", ";
+	std::cout << std::endl;
 }
 
 void Board::Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu) {

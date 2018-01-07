@@ -10,8 +10,8 @@ public:
 
 	void load(const std::string& path);
 
-	const std::vector<std::vector<uint8_t>>& PRG() const { return m_prg; }
-	const std::vector<std::vector<uint8_t>>& CHR() const { return m_chr; }
+	std::vector<std::vector<uint8_t>>& PRG() { return m_prg; }
+	std::vector<std::vector<uint8_t>>& CHR() { return m_chr; }
 
 private:
 	enum mirroring_t {

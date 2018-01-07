@@ -13,6 +13,7 @@
 #include <Disassembly.h>
 
 #include "Configuration.h"
+#include "NesFile.h"
 
 class Board : public EightBit::Bus {
 public:
@@ -39,6 +40,7 @@ protected:
 private:
 	EightBit::Ricoh2A03 m_cpu;
 	EightBit::Ram m_ram = 0x10000;
+	NesFile m_cartridge;
 
 	EightBit::Symbols m_symbols;
 	EightBit::Disassembly m_disassembler;
