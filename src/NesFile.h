@@ -10,6 +10,7 @@ public:
 
 	void load(const std::string& path);
 
+	std::vector<uint8_t>& PRGRAM() { return m_prgRam; }
 	std::vector<std::vector<uint8_t>>& PRG() { return m_prg; }
 	std::vector<std::vector<uint8_t>>& CHR() { return m_chr; }
 
@@ -65,4 +66,5 @@ private:
 
 	std::vector<std::vector<uint8_t>> m_prg;
 	std::vector<std::vector<uint8_t>> m_chr;
+	std::vector<uint8_t> m_prgRam;
 };

@@ -30,6 +30,7 @@ public:
 
 	EightBit::Ricoh2A03& CPU() { return m_cpu; }
 	EightBit::Ram& RAM() { return m_ram; }
+	NesFile& cartridge() { return m_cartridge; }
 
 	void initialise();
 	void reset();
@@ -39,7 +40,7 @@ protected:
 
 private:
 	EightBit::Ricoh2A03 m_cpu;
-	EightBit::Ram m_ram = 0x10000;
+	EightBit::Ram m_ram = 0x6000;
 	NesFile m_cartridge;
 
 	EightBit::Symbols m_symbols;

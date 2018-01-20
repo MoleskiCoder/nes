@@ -18,7 +18,11 @@ Board::Board(const Configuration& configuration)
 
 void Board::initialise() {
 	const auto romDirectory = m_configuration.getRomDirectory();
-	loadRom(romDirectory + "/nestest.nes");
+
+	//loadRom(romDirectory + "/nestest.nes");
+
+	loadRom(romDirectory + "/instr_test-v5/rom_singles/01-basics.nes");
+
 	reset();
 }
 
@@ -26,12 +30,21 @@ void Board::reset() {
 	EightBit::Ricoh2A03::lower(CPU().RESET());
 }
 
+// Mapper 0 (AKA NROM)
 uint8_t& Board::reference(uint16_t address, bool& rom) {
+
 	rom = false;
-	if (address < 0xc000)
+	if (address < 0x6000)
 		return RAM().reference(address);
+	if (address < 0x8000)
+		return cartridge().PRGRAM()[address - 0x6000];
+
 	rom = true;
-	return m_cartridge.PRG()[0][address - 0xc000];
+	if (address < 0xC000)
+		return cartridge().PRG()[0][address - 0x8000];
+
+	const auto roms = cartridge().PRG().size();
+	return cartridge().PRG()[roms - 1][address - 0xc000];
 }
 
 void Board::loadRom(const std::string& path) {
