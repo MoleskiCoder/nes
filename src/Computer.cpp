@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Computer.h"
 
+#include <iostream>
+
 Computer::Computer(const Configuration& configuration)
 : m_configuration(configuration),
   m_board(configuration) {
@@ -8,6 +10,7 @@ Computer::Computer(const Configuration& configuration)
 
 void Computer::initialise() {
 	m_board.initialise();
+	m_board.WrittenByte.connect(std::bind(&Computer::Board_WrittenByte, this, std::placeholders::_1));
 }
 
 void Computer::runLoop() {
@@ -25,5 +28,12 @@ void Computer::runLoop() {
 	auto cycles = 0;
 	while (cpu.powered()) {
 		cycles += cpu.step();
+	}
+}
+
+void Computer::Board_WrittenByte(const uint16_t address) {
+	if (address >= 0x6004) {
+		const auto contents = m_board.peek(address);
+		std::cout << (char)contents;
 	}
 }

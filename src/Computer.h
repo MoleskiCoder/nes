@@ -12,6 +12,8 @@ public:
 	void initialise();
 
 private:
+	void Board_WrittenByte(uint16_t address);
+
 	enum {
 		DisplayScale = 2,
 		RasterWidth = 256,

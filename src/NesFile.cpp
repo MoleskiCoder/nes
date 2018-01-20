@@ -25,5 +25,7 @@ void NesFile::load(const std::string& path) {
 	for (int i = 0; i < m_header.decoded.chrRomSize; ++i)
 		EightBit::Memory::load(file, m_chr[i], 0, 16 + 0x2000 * i, 0x2000, -1);
 
+	m_prgRam.resize(0x2000);
+
 	file.close();
 }
