@@ -23,7 +23,7 @@ void Board::initialise() {
 
 	//loadRom(romDirectory + "/nestest.nes");
 
-	loadRom(romDirectory + "/instr_test-v5/rom_singles/01-basics.nes");		// pass
+	//loadRom(romDirectory + "/instr_test-v5/rom_singles/01-basics.nes");		// pass
 	//loadRom(romDirectory + "/instr_test-v5/rom_singles/02-implied.nes");		// pass
 	//loadRom(romDirectory + "/instr_test-v5/rom_singles/03-immediate.nes");	// illegal instruction failures
 	//loadRom(romDirectory + "/instr_test-v5/rom_singles/04-zero_page.nes");	// pass
@@ -42,7 +42,7 @@ void Board::initialise() {
 
 	// Mapper 1?
 
-	//loadRom(romDirectory + "/instr_test-v5/official_only.nes");
+	loadRom(romDirectory + "/instr_test-v5/official_only.nes");
 	//loadRom(romDirectory + "/instr_test-v5/all_instrs.nes");
 
 	reset();
@@ -71,6 +71,7 @@ uint8_t& Board::reference(uint16_t address, bool& rom) {
 
 void Board::loadRom(const std::string& path) {
 	m_cartridge.load(path);
+	m_cartridge.dumpInformation();
 }
 
 void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {

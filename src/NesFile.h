@@ -9,6 +9,7 @@ public:
 	NesFile() = default;
 
 	void load(const std::string& path);
+	void dumpInformation() const;
 
 	std::vector<uint8_t>& PRGRAM() { return m_prgRam; }
 	std::vector<std::vector<uint8_t>>& PRG() { return m_prg; }
@@ -33,14 +34,14 @@ private:
 		uint8_t chrRomSize;			// Size of CHR ROM in 8 KB units (Value 0 means the board uses CHR RAM)
 
 		// Flags 6
-		int mapperLower : 4;	
+		uint8_t mapperLower : 4;	
 		bool fourScreenVramLayout : 1;
 		bool trainerPatch : 1;
 		bool batteryBackedSram : 1;
 		mirroring_t mirroring : 1;
 
 		// Flags 7
-		int mapperUpper : 4;
+		uint8_t mapperUpper : 4;
 		int reserved7 : 2;
 		bool pc10 : 1;
 		bool vsUnisystem : 1;
@@ -55,6 +56,14 @@ private:
 		uint8_t flag10;
 
 		uint8_t zeroed[5];			// Zero filled
+
+		uint8_t buildMapperType() const {
+			return mapperLower | (mapperUpper << 4);
+		}
+
+		int buildPrgRamSize() const {
+			return prgRamSize == 0 ? 1 : prgRamSize;
+		}
 	};
 
 	union header_t {
@@ -67,4 +76,5 @@ private:
 	std::vector<std::vector<uint8_t>> m_prg;
 	std::vector<std::vector<uint8_t>> m_chr;
 	std::vector<uint8_t> m_prgRam;
+	std::string m_path;
 };
