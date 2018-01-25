@@ -7,6 +7,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <memory>
+#include <cassert>
 
 #include <Memory.h>
 #include <Rom.h>

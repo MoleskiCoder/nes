@@ -11,9 +11,11 @@ public:
 	void load(const std::string& path);
 	void dumpInformation() const;
 
-	std::vector<uint8_t>& PRGRAM() { return m_prgRam; }
-	std::vector<std::vector<uint8_t>>& PRG() { return m_prg; }
-	std::vector<std::vector<uint8_t>>& CHR() { return m_chr; }
+	uint8_t getMapper() const { return m_header.decoded.buildMapperType(); }
+	uint8_t getSizePRGROM() const { return m_header.decoded.prgRomSize; }
+	uint8_t getSizeCHRROM() const { return m_header.decoded.chrRomSize; }
+
+	const std::vector<uint8_t>& content() const { return m_content; }
 
 private:
 	enum mirroring_t {
@@ -72,9 +74,6 @@ private:
 	};
 
 	header_t m_header;
-
-	std::vector<std::vector<uint8_t>> m_prg;
-	std::vector<std::vector<uint8_t>> m_chr;
-	std::vector<uint8_t> m_prgRam;
+	std::vector<uint8_t> m_content;
 	std::string m_path;
 };

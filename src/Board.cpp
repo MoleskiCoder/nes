@@ -21,7 +21,7 @@ void Board::initialise() {
 
 	// Mapper 0
 
-	//loadRom(romDirectory + "/nestest.nes");
+	loadRom(romDirectory + "/nestest.nes");
 
 	//loadRom(romDirectory + "/instr_test-v5/rom_singles/01-basics.nes");		// pass
 	//loadRom(romDirectory + "/instr_test-v5/rom_singles/02-implied.nes");		// pass
@@ -42,7 +42,7 @@ void Board::initialise() {
 
 	// Mapper 1?
 
-	loadRom(romDirectory + "/instr_test-v5/official_only.nes");
+	//loadRom(romDirectory + "/instr_test-v5/official_only.nes");
 	//loadRom(romDirectory + "/instr_test-v5/all_instrs.nes");
 
 	reset();
@@ -52,26 +52,24 @@ void Board::reset() {
 	EightBit::Ricoh2A03::lower(CPU().RESET());
 }
 
-// Mapper 0 (AKA NROM)
 uint8_t& Board::reference(uint16_t address, bool& rom) {
 
 	rom = false;
-	if (address < 0x6000)
-		return RAM().reference(address);
-	if (address < 0x8000)
-		return cartridge().PRGRAM()[address - 0x6000];
 
-	rom = true;
-	if (address < 0xC000)
-		return cartridge().PRG()[0][address - 0x8000];
+	if (address < 0x2000)
+		return RAM().reference(address & 0x7ff);
 
-	const auto roms = cartridge().PRG().size();
-	return cartridge().PRG()[roms - 1][address - 0xc000];
+	if (address < 0x4000)
+		return PPU().reference(address & 0x7);
+
+	if (address < 0x4018)
+		return APU().reference(address - 0x4000);
+
+	return cartridge().reference(address, rom);
 }
 
 void Board::loadRom(const std::string& path) {
-	m_cartridge.load(path);
-	m_cartridge.dumpInformation();
+	m_cartridge.reset(new Cartridge(path));
 }
 
 void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {

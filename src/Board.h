@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <memory>
 
 #include <Rom.h>
 #include <Ram.h>
@@ -13,7 +14,7 @@
 #include <Disassembly.h>
 
 #include "Configuration.h"
-#include "NesFile.h"
+#include "Cartridge.h"
 
 class Board : public EightBit::Bus {
 public:
@@ -30,7 +31,9 @@ public:
 
 	EightBit::Ricoh2A03& CPU() { return m_cpu; }
 	EightBit::Ram& RAM() { return m_ram; }
-	NesFile& cartridge() { return m_cartridge; }
+	EightBit::Ram& PPU() { return m_ppu; }
+	EightBit::Ram& APU() { return m_apu; }
+	Cartridge& cartridge() { return *m_cartridge; }
 
 	void initialise();
 	void reset();
@@ -40,8 +43,12 @@ protected:
 
 private:
 	EightBit::Ricoh2A03 m_cpu;
-	EightBit::Ram m_ram = 0x6000;
-	NesFile m_cartridge;
+
+	EightBit::Ram m_ram = 0x800;	// 0000h-07FFh (mirrored to 800h-1FFFh)
+	EightBit::Ram m_ppu = 0x8;		// 2000h-2007h (mirrored to 2008h-3FFFh)
+	EightBit::Ram m_apu = 0x18;
+
+	std::unique_ptr<Cartridge> m_cartridge;
 
 	EightBit::Symbols m_symbols;
 	EightBit::Disassembly m_disassembler;
