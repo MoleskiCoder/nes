@@ -2,7 +2,8 @@
 #include "Cartridge.h"
 #include "NROM.h"
 
-Cartridge::Cartridge(const std::string& path) {
+Cartridge::Cartridge(EightBit::Bus& bus, const std::string& path)
+: m_bus(bus) {
 
 	m_container.load(path);
 	m_container.dumpInformation();

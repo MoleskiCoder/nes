@@ -69,7 +69,7 @@ uint8_t& Board::reference(uint16_t address, bool& rom) {
 }
 
 void Board::loadRom(const std::string& path) {
-	m_cartridge.reset(new Cartridge(path));
+	m_cartridge.reset(new Cartridge(*this, path));
 }
 
 void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
