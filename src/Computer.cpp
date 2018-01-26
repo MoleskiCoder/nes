@@ -6,18 +6,20 @@
 Computer::Computer(const Configuration& configuration)
 : m_configuration(configuration),
   m_board(configuration) {
-}
-
-void Computer::initialise() {
-	m_board.initialise();
 	m_board.WrittenByte.connect(std::bind(&Computer::Board_WrittenByte, this, std::placeholders::_1));
 }
 
-void Computer::runLoop() {
+void Computer::plug(const std::string& path) {
+	m_board.plug(path);
+}
+
+void Computer::run() {
 
 	auto& cpu = m_board.CPU();
 
 	cpu.powerOn();
+
+	m_board.reset();
 
 	// Nestest...
 	cpu.PC().word = 0xC000;	// Hack!!
@@ -32,6 +34,7 @@ void Computer::runLoop() {
 }
 
 void Computer::Board_WrittenByte(const uint16_t address) {
+	// for Blargg tests
 	if (address >= 0x6004) {
 		const auto contents = m_board.peek(address);
 		std::cout << (char)contents;

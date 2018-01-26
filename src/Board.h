@@ -35,7 +35,7 @@ public:
 	EightBit::Ram& APU() { return m_apu; }
 	Cartridge& cartridge() { return *m_cartridge; }
 
-	void initialise();
+	void plug(const std::string& path);
 	void reset();
 
 protected:
@@ -56,8 +56,6 @@ private:
 	int m_totalCPUCycles = 0;
 
 	const Configuration& m_configuration;
-
-	void loadRom(const std::string& path);
 
 	void Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu);
 	void Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu);

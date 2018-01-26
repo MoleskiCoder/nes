@@ -8,8 +8,8 @@ class Computer {
 public:
 	Computer(const Configuration& configuration);
 
-	void runLoop();
-	void initialise();
+	void plug(const std::string& path);
+	void run();
 
 private:
 	void Board_WrittenByte(uint16_t address);

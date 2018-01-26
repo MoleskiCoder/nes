@@ -18,12 +18,9 @@ public:
 	bool getVsyncLocked() const { return m_vsyncLocked; }
 	void setVsyncLocked(bool value) { m_vsyncLocked = value; }
 
-	std::string getRomDirectory() const { return m_romDirectory; }
-
 private:
 	bool m_debugMode = false;
 	bool m_profileMode = false;
 	bool m_drawGraphics = true;
 	bool m_vsyncLocked = true;
-	std::string m_romDirectory = "roms";
 };
