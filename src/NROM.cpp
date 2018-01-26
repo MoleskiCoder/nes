@@ -24,7 +24,7 @@ NROM::NROM(const NesFile& nesFile) {
 		auto& rom = CHR()[i];
 		rom.resize(0x2000);
 		std::copy_n(
-			content.cbegin() + 16 + 0x4000 * sizePRGROM,
+			content.cbegin() + 16 + 0x4000 * sizePRGROM + 0x2000 * i,
 			0x2000,
 			rom.begin());
 	}
