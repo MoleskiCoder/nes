@@ -80,9 +80,7 @@ void MMC1::Bus_WrittenByte(const uint16_t address) {
 	assert(m_shiftCounter < 5);
 
 	if (UNLIKELY(reset)) {
-
 		m_shiftCounter = 0;
-
 	} else {
 
 		const auto addressMSB = m_bus.ADDRESS().high;
@@ -93,50 +91,8 @@ void MMC1::Bus_WrittenByte(const uint16_t address) {
 		assert(m_shiftRegister < 32);
 
 		if (m_shiftCounter == 0) {
-
 			m_controls[mapperRegister].raw = m_shiftRegister;
-			//registerUpdated(mapperRegister);
-
 			m_shiftRegister = 0;
 		}
 	}
 }
-
-//void MMC1::registerUpdated(const size_t index) {
-//
-//	std::cout << std::endl;
-//	std::cout << "** Register " << index << ", raw: " << (int)(m_controls[index].raw) << std::endl;
-//
-//	switch (index) {
-//
-//	case 0b00: {
-//			const register0_t& control = m_controls[index].decoded0;
-//			std::cout << "** Mirroring: " << (int)(control.mirroring) << std::endl;
-//			std::cout << "** PRG-ROM bank mode: " << (int)(control.prgRomBankMode) << std::endl;
-//			std::cout << "** CHR-ROM bank mode: " << (int)(control.chrRomBankMode) << std::endl;
-//		}
-//		break;
-//
-//	case 0b01: {
-//			const register1_t& control = m_controls[index].decoded1;
-//			std::cout << "** CHR-ROM bank 0: " << (int)(control.chrRomBank) << std::endl;
-//		}
-//		break;
-//
-//	case 0b10: {
-//			const register2_t& control = m_controls[index].decoded2;
-//			std::cout << "** CHR-ROM bank 1: " << (int)(control.chrRomBank) << std::endl;
-//		}
-//		break;
-//
-//	case 0b11: {
-//			const register3_t& control = m_controls[index].decoded3;
-//			std::cout << "\n** PRG-ROM bank: " << (int)(control.prgRomBank) << std::endl;
-//			std::cout << "\n** PRG-RAM enable mode: " << (int)(control.prgRamEnable) << std::endl;
-//		}
-//		break;
-//
-//	default:
-//		UNREACHABLE;
-//	}
-//}

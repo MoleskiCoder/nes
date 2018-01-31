@@ -19,8 +19,6 @@ public:
 private:
 	void Bus_WrittenByte(uint16_t address);
 
-	//void registerUpdated(size_t index);
-
 	void resetRegisters();
 
 	std::vector<uint8_t>& PRGRAM() { return m_prgRam; }
