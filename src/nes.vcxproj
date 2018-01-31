@@ -145,6 +145,7 @@
     <ClCompile Include="Cartridge.cpp" />
     <ClCompile Include="Computer.cpp" />
     <ClCompile Include="Mapper.cpp" />
+    <ClCompile Include="MMC1.cpp" />
     <ClCompile Include="nes.cpp" />
     <ClCompile Include="NesFile.cpp" />
     <ClCompile Include="NROM.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Computer.h" />
     <ClInclude Include="Configuration.h" />
     <ClInclude Include="Mapper.h" />
+    <ClInclude Include="MMC1.h" />
     <ClInclude Include="NesFile.h" />
     <ClInclude Include="NROM.h" />
     <ClInclude Include="stdafx.h" />

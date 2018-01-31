@@ -15,6 +15,7 @@
 #include <Ram.h>
 #include <Bus.h>
 #include <Register.h>
+#include <Disassembly.h>
 
 #include <Ricoh2A03.h>
 

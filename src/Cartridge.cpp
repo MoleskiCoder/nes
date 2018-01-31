@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Cartridge.h"
 #include "NROM.h"
+#include "MMC1.h"
 
 Cartridge::Cartridge(EightBit::Bus& bus, const std::string& path)
 : m_bus(bus) {
@@ -13,6 +14,9 @@ Cartridge::Cartridge(EightBit::Bus& bus, const std::string& path)
 	switch (mapper) {
 	case 0:
 		m_mapper.reset(new NROM(m_container));
+		break;
+	case 1:
+		m_mapper.reset(new MMC1(m_bus, m_container));
 		break;
 	default:
 		throw std::exception("Unhandled cartridge mapper");

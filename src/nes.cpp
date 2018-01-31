@@ -18,7 +18,7 @@ int main(int, char*[])
 
 	// Mapper 0
 	
-	computer.plug(romDirectory + "/nestest.nes");
+	//computer.plug(romDirectory + "/nestest.nes");	// pass
 	
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/01-basics.nes");		// pass
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/02-implied.nes");		// pass
@@ -39,7 +39,7 @@ int main(int, char*[])
 	
 	// Mapper 1?
 	
-	//computer.plug(romDirectory + "/instr_test-v5/official_only.nes");
+	computer.plug(romDirectory + "/instr_test-v5/official_only.nes");
 	//computer.plug(romDirectory + "/instr_test-v5/all_instrs.nes");
 
 	computer.run();
