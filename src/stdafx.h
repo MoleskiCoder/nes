@@ -19,6 +19,8 @@
 
 #include <Ricoh2A03.h>
 
+#include <SDL.h>
+
 #ifdef _MSC_VER
 #pragma comment(lib, "SDL2.lib")
 #pragma comment(lib, "SDL2main.lib")

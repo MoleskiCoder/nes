@@ -25,6 +25,19 @@ public:
 
 		PPUCyclesPerCPUCycle = 3,
 		PPUCyclesPerScanLine = 341,
+
+		RasterWidth = 256,
+		RasterHeight = 224,
+
+		ScanLinesVBlankLatency = 2,
+		ScanLinesVBlank = 20,
+		ScanLinesTopBorder = 8,
+		ScanLinesBottomBorder = ScanLinesTopBorder,
+		ScanLinesPerFrame = ScanLinesTopBorder + RasterHeight + ScanLinesBottomBorder + ScanLinesVBlankLatency + ScanLinesVBlank,
+
+		FramesPerSecond = 60,
+		CyclesPerFrame = CPUClockSpeed / FramesPerSecond,
+		CyclesPerLine = CyclesPerFrame / RasterHeight,
 	};
 
 	Board(const Configuration& configuration);
@@ -37,6 +50,16 @@ public:
 
 	void plug(const std::string& path);
 	void reset();
+
+	int run(int limit);
+	int runScanLine();
+	int runScanLines(int lines);
+
+	int runScanLinesTopBorder();
+	int runScanLinesRaster();
+	int runScanLinesBottomBorder();
+	int runScanLinesVBlankLatency();
+	int runScanLinesVBlank();
 
 protected:
 	virtual uint8_t& reference(uint16_t address, bool& rom);

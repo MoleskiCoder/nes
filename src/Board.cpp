@@ -65,3 +65,38 @@ void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
 void Board::Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu) {
 	m_totalCPUCycles += CPU().clockCycles();
 }
+
+int Board::run(int limit) {
+	return CPU().run(limit);
+}
+
+int Board::runScanLine() {
+	return run(CyclesPerLine);
+}
+
+int Board::runScanLines(const int lines) {
+	int count = 0;
+	for (int line = 0; line < lines; ++line)
+		count += runScanLine();
+	return count;
+}
+
+int Board::runScanLinesTopBorder() {
+	return runScanLines(ScanLinesTopBorder);
+}
+
+int Board::runScanLinesBottomBorder() {
+	return runScanLines(ScanLinesBottomBorder);
+}
+
+int Board::runScanLinesRaster() {
+	return runScanLines(RasterHeight);
+}
+
+int Board::runScanLinesVBlankLatency() {
+	return runScanLines(ScanLinesVBlankLatency);
+}
+
+int Board::runScanLinesVBlank() {
+	return runScanLines(ScanLinesVBlank);
+}

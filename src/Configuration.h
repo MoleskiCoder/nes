@@ -15,12 +15,8 @@ public:
 	bool isDrawGraphics() const { return m_drawGraphics; }
 	void setDrawGraphics(bool value) { m_drawGraphics = value; }
 
-	bool getVsyncLocked() const { return m_vsyncLocked; }
-	void setVsyncLocked(bool value) { m_vsyncLocked = value; }
-
 private:
 	bool m_debugMode = false;
 	bool m_profileMode = false;
 	bool m_drawGraphics = true;
-	bool m_vsyncLocked = true;
 };
