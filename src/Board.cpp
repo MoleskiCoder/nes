@@ -8,6 +8,7 @@
 
 Board::Board(const Configuration& configuration)
 : m_cpu(*this),
+  m_ppu(*this),
   m_symbols(""),
   m_disassembler(m_cpu, m_symbols),
   m_configuration(configuration) {
@@ -28,14 +29,23 @@ uint8_t& Board::reference(uint16_t address, bool& rom) {
 
 	rom = false;
 
-	if (address < 0x2000)
+	if (address < Display::PPU_START)
 		return RAM().reference(address & 0x7ff);
 
-	if (address < 0x4000)
-		return PPU().reference(address & 0x7);
+	if (address <= Display::PPU_FINISH)
+		return PPU().reference(address, rom);
+
+	if (address < 0x4014)
+		return APU().reference(address - 0x4000);
+
+	if (address == 0x4014)
+		return PPU().reference(address, rom);	// Alias for the Sprite DMA register
+
+	if (address == 0x4015)
+		return APU().reference(address - 0x4000);
 
 	if (address < 0x4018)
-		return APU().reference(address - 0x4000);
+		return m_joysticks.reference(address - 0x4016);
 
 	return cartridge().reference(address, rom);
 }

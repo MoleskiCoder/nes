@@ -144,6 +144,7 @@
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Cartridge.cpp" />
     <ClCompile Include="Computer.cpp" />
+    <ClCompile Include="Display.cpp" />
     <ClCompile Include="Mapper.cpp" />
     <ClCompile Include="MMC1.cpp" />
     <ClCompile Include="nes.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Cartridge.h" />
     <ClInclude Include="Computer.h" />
     <ClInclude Include="Configuration.h" />
+    <ClInclude Include="Display.h" />
     <ClInclude Include="Mapper.h" />
     <ClInclude Include="MMC1.h" />
     <ClInclude Include="NesFile.h" />

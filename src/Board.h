@@ -15,6 +15,7 @@
 
 #include "Configuration.h"
 #include "Cartridge.h"
+#include "Display.h"
 
 class Board : public EightBit::Bus {
 public:
@@ -44,7 +45,7 @@ public:
 
 	EightBit::Ricoh2A03& CPU() { return m_cpu; }
 	EightBit::Ram& RAM() { return m_ram; }
-	EightBit::Ram& PPU() { return m_ppu; }
+	Display& PPU() { return m_ppu; }
 	EightBit::Ram& APU() { return m_apu; }
 	Cartridge& cartridge() { return *m_cartridge; }
 
@@ -68,8 +69,9 @@ private:
 	EightBit::Ricoh2A03 m_cpu;
 
 	EightBit::Ram m_ram = 0x800;	// 0000h-07FFh (mirrored to 800h-1FFFh)
-	EightBit::Ram m_ppu = 0x8;		// 2000h-2007h (mirrored to 2008h-3FFFh)
-	EightBit::Ram m_apu = 0x18;
+	Display m_ppu;
+	EightBit::Ram m_apu = 0x16;
+	EightBit::Ram m_joysticks = 2;
 
 	std::unique_ptr<Cartridge> m_cartridge;
 
