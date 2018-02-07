@@ -108,5 +108,8 @@ int Board::runScanLinesVBlankLatency() {
 }
 
 int Board::runScanLinesVBlank() {
-	return runScanLines(ScanLinesVBlank);
+	PPU().setVBlank();
+	const auto returned = runScanLines(ScanLinesVBlank);
+	PPU().clearVBlank();
+	return returned;
 }

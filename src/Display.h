@@ -25,37 +25,42 @@ public:
 
 	virtual uint8_t& reference(uint16_t address, bool& rom) final;
 
+	void setVBlank() { vblankOccurring(true); }
+	void clearVBlank() { vblankOccurring(false); }
+
 private:
 	static bool convertAddress(uint16_t address, size_t& index, bool& writable, bool& readable);
 
+	void Bus_WritingByte(uint16_t address);
 	void Bus_WrittenByte(uint16_t address);
 	void Bus_ReadingByte(uint16_t address);
+	void Bus_ReadByte(uint16_t address);
 
 	EightBit::Bus& BUS() { return m_bus; }
 
 	EightBit::Bus& m_bus;
 
 	// Control register 1 wrappers:
-	uint16_t nameTableAddress() const { return m_registers[PPUCTRL].decoded0.nameTableAddress(); }
-	int addressIncrement() const { return m_registers[PPUCTRL].decoded0.addressIncrement(); }
-	uint16_t spritePatternTableAddress() const { return m_registers[PPUCTRL].decoded0.spritePatternTableAddress(); }
-	uint16_t backgroundPatternTableAddress() const { return m_registers[PPUCTRL].decoded0.backgroundPatternTableAddress(); }
-	int spriteHeight() const { return m_registers[PPUCTRL].decoded0.spriteHeight(); }
-	bool nmi() const { return m_registers[PPUCTRL].decoded0.nmi(); }
+	uint16_t nameTableAddress() const { return m_registers[PPUCTRL].decodedPPUCTRL.nameTableAddress(); }
+	int addressIncrement() const { return m_registers[PPUCTRL].decodedPPUCTRL.addressIncrement(); }
+	uint16_t spritePatternTableAddress() const { return m_registers[PPUCTRL].decodedPPUCTRL.spritePatternTableAddress(); }
+	uint16_t backgroundPatternTableAddress() const { return m_registers[PPUCTRL].decodedPPUCTRL.backgroundPatternTableAddress(); }
+	int spriteHeight() const { return m_registers[PPUCTRL].decodedPPUCTRL.spriteHeight(); }
+	bool nmi() const { return m_registers[PPUCTRL].decodedPPUCTRL.nmi(); }
 
 	// Control register 2 wrappers:
-	bool colour() const { return m_registers[PPUMASK].decoded1.colour(); }
-	bool clipBackground() const { return m_registers[PPUMASK].decoded1.clipBackground(); }
-	bool clipSprites() const { return m_registers[PPUMASK].decoded1.clipSprites(); }
-	bool hideBackground() const { return m_registers[PPUMASK].decoded1.hideBackground(); }
-	bool hideSprites() const { return m_registers[PPUMASK].decoded1.hideSprites(); }
-	int backgroundIntensity() const { return m_registers[PPUMASK].decoded1.backgroundIntensity(); }
+	bool colour() const { return m_registers[PPUMASK].decodedPPUMASK.colour(); }
+	bool clipBackground() const { return m_registers[PPUMASK].decodedPPUMASK.clipBackground(); }
+	bool clipSprites() const { return m_registers[PPUMASK].decodedPPUMASK.clipSprites(); }
+	bool hideBackground() const { return m_registers[PPUMASK].decodedPPUMASK.hideBackground(); }
+	bool hideSprites() const { return m_registers[PPUMASK].decodedPPUMASK.hideSprites(); }
+	int backgroundIntensity() const { return m_registers[PPUMASK].decodedPPUMASK.backgroundIntensity(); }
 
 	// Status register wrappers
-	void ignoreVramWrites(bool value) { m_registers[PPUSTATUS].decoded2.ignoreVramWrites(value); }
-	void excessiveScanlineSprites(bool value) { m_registers[PPUSTATUS].decoded2.excessiveScanlineSprites(value); }
-	void spriteZeroHit(bool value) { m_registers[PPUSTATUS].decoded2.spriteZeroHit(value); }
-	void vblankOccurring(bool value) { m_registers[PPUSTATUS].decoded2.vblankOccurring(value); }
+	void ignoreVramWrites(bool value) { m_registers[PPUSTATUS].decodedPPUSTATUS.ignoreVramWrites(value); }
+	void excessiveScanlineSprites(bool value) { m_registers[PPUSTATUS].decodedPPUSTATUS.excessiveScanlineSprites(value); }
+	void spriteZeroHit(bool value) { m_registers[PPUSTATUS].decodedPPUSTATUS.spriteZeroHit(value); }
+	void vblankOccurring(bool value) { m_registers[PPUSTATUS].decodedPPUSTATUS.vblankOccurring(value); }
 
 	// PPUCTRL
 	struct control_register_1_t {
@@ -138,16 +143,24 @@ private:
 
 	union register_t {
 		uint8_t raw;
-		control_register_1_t decoded0;			// PPUCTRL
-		control_register_2_t decoded1;			// PPUMASK
-		status_register_t decoded2;				// PPUSTATUS
-		spr_ram_address_register_t decoded3;	// OAMADDR
-		spr_ram_io_register_t decoded4;			// OAMDATA
-		vram_address_register_1_t decoded5;		// PPUSCROLL
-		vram_address_register_2_t decoded6;		// PPUADDR
-		vram_io_register_t decoded7;			// PPUDATA
-		spr_dma_register_t decoded8;			// OAMDMA
+		control_register_1_t decodedPPUCTRL;
+		control_register_2_t decodedPPUMASK;
+		status_register_t decodedPPUSTATUS;
+		spr_ram_address_register_t decodedOAMADDR;
+		spr_ram_io_register_t decodedOAMDATA;
+		vram_address_register_1_t decodedPPUSCROLL;
+		vram_address_register_2_t decodedPPUADDR;
+		vram_io_register_t decodedPPUDATA;
+		spr_dma_register_t decodedOAMDMA;
 	};
 
 	std::array<register_t, 9> m_registers;
+
+	// PPUSCROLL
+	size_t m_ppuScrollLatch : 1;
+	std::array<uint8_t, 2> m_ppuScrollPosition;	// X,Y
+
+	// PPUADDR
+	size_t m_ppuAddressLatch : 1;
+	std::array<uint8_t, 2> m_ppuAddress;
 };
