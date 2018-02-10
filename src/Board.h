@@ -84,4 +84,6 @@ private:
 
 	void Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu);
 	void Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu);
+
+	void Bus_WrittenByte(uint16_t address);
 };

@@ -15,6 +15,7 @@ Board::Board(const Configuration& configuration)
 	if (m_configuration.isDebugMode())
 		CPU().ExecutingInstruction.connect(std::bind(&Board::Cpu_ExecutingInstruction_Debug, this, std::placeholders::_1));
 	CPU().ExecutedInstruction.connect(std::bind(&Board::Cpu_ExecutedInstruction, this, std::placeholders::_1));
+	WrittenByte.connect(std::bind(&Board::Bus_WrittenByte, this, std::placeholders::_1));
 }
 
 void Board::plug(const std::string& path) {
@@ -109,7 +110,16 @@ int Board::runScanLinesVBlankLatency() {
 
 int Board::runScanLinesVBlank() {
 	PPU().setVBlank();
+	if (PPU().nmi())
+		EightBit::Processor::lower(CPU().NMI());
 	const auto returned = runScanLines(ScanLinesVBlank);
 	PPU().clearVBlank();
 	return returned;
+}
+
+void Board::Bus_WrittenByte(const uint16_t address) {
+	if (address == 0x4014) {	// OAMDMA
+		PPU().triggerOAMDMA(DATA());
+		// 513 cycles???
+	}
 }

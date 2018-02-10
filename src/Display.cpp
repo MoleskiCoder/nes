@@ -11,34 +11,31 @@ Display::Display(EightBit::Bus& bus)
 
 bool Display::convertAddress(const uint16_t address, size_t& index, bool& writable, bool& readable) {
 
-	if ((address >= PPU_START) && (address <= PPU_FINISH)) {
-		index = address & 7;
-	} else if (address == (0x4000 + OAMDMA)) {
-		index = 8;
-	} else {
+	if ((address < PPU_START) || (address > PPU_FINISH))
 		return false;
-	}
+
+	index = address & 7;
 
 	writable = readable = false;
 	switch (index) {
-	case PPUSTATUS:
+	case idxPPUSTATUS:
 		readable = true;
 		break;
-	case PPUDATA:
+	case idxOAMDATA:
+	case idxPPUDATA:
 		readable = writable = true;
 		break;
-	case PPUCTRL:
-	case PPUMASK:
-	case OAMADDR:
-	case OAMDATA:
-	case PPUSCROLL:
-	case PPUADDR:
-	case 8:			// OAMDMA
+	case idxPPUCTRL:
+	case idxPPUMASK:
+	case idxOAMADDR:
+	case idxPPUSCROLL:
+	case idxPPUADDR:
 		writable = true;
 		break;
 	default:
 		UNREACHABLE;
 	}
+
 	return true;
 }
 
@@ -59,26 +56,22 @@ void Display::Bus_WritingByte(const uint16_t address) {
 	if (!convertAddress(address, index, writable, readable))
 		return;
 
-	const auto& data = BUS().DATA();
-
 	switch (index) {
-	case PPUCTRL:
+	case idxPPUCTRL:
 		break;
-	case PPUMASK:
+	case idxPPUMASK:
 		break;
-	case PPUSTATUS:
+	case idxPPUSTATUS:
 		break;
-	case OAMADDR:
+	case idxOAMADDR:
 		break;
-	case OAMDATA:
+	case idxOAMDATA:
 		break;
-	case PPUSCROLL:
+	case idxPPUSCROLL:
 		break;
-	case PPUADDR:
+	case idxPPUADDR:
 		break;
-	case PPUDATA:
-		break;
-	case 8:		// OAMDMA
+	case idxPPUDATA:
 		break;
 	default:
 		UNREACHABLE;
@@ -95,23 +88,26 @@ void Display::Bus_WrittenByte(const uint16_t address) {
 	const auto& data = BUS().DATA();
 
 	switch (index) {
-	case PPUCTRL:
+	case idxPPUCTRL:
 		break;
-	case PPUMASK:
+	case idxPPUMASK:
 		break;
-	case PPUSTATUS:
+	case idxPPUSTATUS:
 		break;
-	case OAMADDR:
+	case idxOAMADDR:
+		OAMADDR() = data;
 		break;
-	case OAMDATA:
+	case idxOAMDATA:
+		OAMRAM().poke(OAMADDR()++, data);
 		break;
-	case PPUSCROLL:
+	case idxPPUSCROLL:
 		break;
-	case PPUADDR:
+	case idxPPUADDR:
+		m_ppuAddress[m_ppuAddressLatch++] = data;
 		break;
-	case PPUDATA:
-		break;
-	case 8:		// OAMDMA
+	case idxPPUDATA:
+		VRAM().poke(ppuAddress() & 0x3fff, data);
+		incrementPPUAddress();
 		break;
 	default:
 		UNREACHABLE;
@@ -126,23 +122,22 @@ void Display::Bus_ReadingByte(const uint16_t address) {
 		return;
 
 	switch (index) {
-	case PPUCTRL:
+	case idxPPUCTRL:
 		break;
-	case PPUMASK:
+	case idxPPUMASK:
 		break;
-	case PPUSTATUS:
+	case idxPPUSTATUS:
 		break;
-	case OAMADDR:
+	case idxOAMADDR:
 		break;
-	case OAMDATA:
+	case idxOAMDATA:
+		OAMDATA() = OAMRAM().peek(OAMADDR());
 		break;
-	case PPUSCROLL:
+	case idxPPUSCROLL:
 		break;
-	case PPUADDR:
+	case idxPPUADDR:
 		break;
-	case PPUDATA:
-		break;
-	case 8:		// OAMDMA
+	case idxPPUDATA:
 		break;
 	default:
 		UNREACHABLE;
@@ -157,27 +152,31 @@ void Display::Bus_ReadByte(const uint16_t address) {
 		return;
 
 	switch (index) {
-	case PPUCTRL:
+	case idxPPUCTRL:
 		break;
-	case PPUMASK:
+	case idxPPUMASK:
 		break;
-	case PPUSTATUS:
+	case idxPPUSTATUS:
 		clearVBlank();
 		m_ppuScrollLatch = m_ppuAddressLatch = 0;
 		break;
-	case OAMADDR:
+	case idxOAMADDR:
 		break;
-	case OAMDATA:
+	case idxOAMDATA:
 		break;
-	case PPUSCROLL:
+	case idxPPUSCROLL:
 		break;
-	case PPUADDR:
+	case idxPPUADDR:
 		break;
-	case PPUDATA:
-		break;
-	case 8:		// OAMDMA
+	case idxPPUDATA:
 		break;
 	default:
 		UNREACHABLE;
 	}
+}
+
+void Display::triggerOAMDMA(const uint8_t page) {
+	const uint16_t address = page << 8;
+	for (int i = 0; i < 0x100; ++i)
+		OAMRAM().poke(i, BUS().peek(address + i));
 }
