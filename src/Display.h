@@ -72,8 +72,8 @@ private:
 	bool colour() const { return m_registers[idxPPUMASK].decodedPPUMASK.colour(); }
 	bool clipBackground() const { return m_registers[idxPPUMASK].decodedPPUMASK.clipBackground(); }
 	bool clipSprites() const { return m_registers[idxPPUMASK].decodedPPUMASK.clipSprites(); }
-	bool hideBackground() const { return m_registers[idxPPUMASK].decodedPPUMASK.hideBackground(); }
-	bool hideSprites() const { return m_registers[idxPPUMASK].decodedPPUMASK.hideSprites(); }
+	bool showBackground() const { return m_registers[idxPPUMASK].decodedPPUMASK.showBackground(); }
+	bool showSprites() const { return m_registers[idxPPUMASK].decodedPPUMASK.showSprites(); }
 	int backgroundIntensity() const { return m_registers[idxPPUMASK].decodedPPUMASK.backgroundIntensity(); }
 
 	// Status register wrappers
@@ -105,15 +105,15 @@ private:
 		uint8_t _colour : 1;
 		uint8_t _clipBackground : 1;
 		uint8_t _clipSprites : 1;
-		uint8_t _hideBackground : 1;
-		uint8_t _hideSprites : 1;
+		uint8_t _showBackground : 1;
+		uint8_t _showSprites : 1;
 		uint8_t _backgroundIntensity : 3;
 
 		bool colour() const { return !!_colour; }
 		bool clipBackground() const { return !!_clipBackground; }
 		bool clipSprites() const { return !!_clipSprites; }
-		bool hideBackground() const { return !!_hideBackground; }
-		bool hideSprites() const { return !!_hideSprites; }
+		bool showBackground() const { return !!_showBackground; }
+		bool showSprites() const { return !!_showSprites; }
 		int backgroundIntensity() const { return _backgroundIntensity; }
 	};
 
