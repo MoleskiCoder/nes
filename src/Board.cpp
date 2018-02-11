@@ -128,7 +128,7 @@ int Board::runScanLinesVBlank() {
 }
 
 void Board::Bus_WrittenByte(const uint16_t address) {
-	if (address == 0x4014) {	// OAMDMA
+	if (UNLIKELY(address == 0x4014)) {	// OAMDMA
 		PPU().triggerOAMDMA(DATA());
 		m_oamdmaActive = true;
 	}
