@@ -35,7 +35,10 @@ public:
 	bool stepOAMDMA();	// true, if taken
 
 private:
-	static bool convertAddress(uint16_t address, size_t& index, bool& writable, bool& readable);
+	static size_t maskAddress(uint16_t address);
+	static bool validAddress(uint16_t address);
+	static bool invalidAddress(uint16_t address);
+	static size_t convertAddress(uint16_t address, bool& writable, bool& readable);
 
 	void Bus_WritingByte(uint16_t address);
 	void Bus_WrittenByte(uint16_t address);

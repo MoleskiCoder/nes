@@ -9,14 +9,23 @@ Display::Display(EightBit::Bus& bus)
 	bus.ReadByte.connect(std::bind(&Display::Bus_ReadByte, this, std::placeholders::_1));
 }
 
-bool Display::convertAddress(const uint16_t address, size_t& index, bool& writable, bool& readable) {
+size_t Display::maskAddress(const uint16_t address) {
+	return address & 7;
+}
 
-	if ((address < PPU_START) || (address >= PPU_END))
-		return false;
+bool Display::validAddress(const uint16_t address) {
+	return (address >= PPU_START) && (address < PPU_END);
+}
 
-	index = address & 7;
+bool Display::invalidAddress(const uint16_t address) {
+	return !validAddress(address);
+}
+
+size_t Display::convertAddress(const uint16_t address, bool& writable, bool& readable) {
 
 	writable = readable = false;
+
+	const auto index = maskAddress(address & 7);
 	switch (index) {
 	case idxPPUSTATUS:
 		readable = true;
@@ -36,26 +45,22 @@ bool Display::convertAddress(const uint16_t address, size_t& index, bool& writab
 		UNREACHABLE;
 	}
 
-	return true;
+	return index;
 }
 
 uint8_t& Display::reference(const uint16_t address, bool& rom) {
-	size_t index = 0;
 	bool writable = false, readable = false;
-	if (convertAddress(address, index, writable, readable)) {
-		rom = !writable;
-		return m_registers[index].raw;
-	}
-	UNREACHABLE;
+	const auto index = convertAddress(address, writable, readable);
+	rom = !writable;
+	return m_registers[index].raw;
 }
 
 void Display::Bus_WritingByte(const uint16_t address) {
 
-	size_t index = 0;
-	bool writable = false, readable = false;
-	if (!convertAddress(address, index, writable, readable))
+	if (invalidAddress(address))
 		return;
 
+	const auto index = maskAddress(address);
 	switch (index) {
 	case idxPPUCTRL:
 		break;
@@ -80,13 +85,12 @@ void Display::Bus_WritingByte(const uint16_t address) {
 
 void Display::Bus_WrittenByte(const uint16_t address) {
 
-	size_t index = 0;
-	bool writable = false, readable = false;
-	if (!convertAddress(address, index, writable, readable))
+	if (invalidAddress(address))
 		return;
 
 	const auto& data = BUS().DATA();
 
+	const auto index = maskAddress(address);
 	switch (index) {
 	case idxPPUCTRL:
 		break;
@@ -116,11 +120,10 @@ void Display::Bus_WrittenByte(const uint16_t address) {
 
 void Display::Bus_ReadingByte(const uint16_t address) {
 
-	size_t index = 0;
-	bool writable = false, readable = false;
-	if (!convertAddress(address, index, writable, readable))
+	if (invalidAddress(address))
 		return;
 
+	const auto index = maskAddress(address);
 	switch (index) {
 	case idxPPUCTRL:
 		break;
@@ -146,11 +149,10 @@ void Display::Bus_ReadingByte(const uint16_t address) {
 
 void Display::Bus_ReadByte(const uint16_t address) {
 
-	size_t index = 0;
-	bool writable = false, readable = false;
-	if (!convertAddress(address, index, writable, readable))
+	if (invalidAddress(address))
 		return;
 
+	const auto index = maskAddress(address);
 	switch (index) {
 	case idxPPUCTRL:
 		break;
