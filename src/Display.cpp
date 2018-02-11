@@ -176,7 +176,17 @@ void Display::Bus_ReadByte(const uint16_t address) {
 }
 
 void Display::triggerOAMDMA(const uint8_t page) {
-	const uint16_t address = page << 8;
-	for (int i = 0; i < 0x100; ++i)
-		OAMRAM().poke(i, BUS().peek(address + i));
+	m_oamdmaAddress.high = page;
+	m_oamdmaAddress.low = 0;
+	m_oamdmaActive = true;
+}
+
+bool Display::stepOAMDMA() {
+	const bool taken = m_oamdmaActive;
+	if (m_oamdmaActive) {
+		const uint8_t datum = BUS().peek(m_oamdmaAddress.word);
+		OAMRAM().poke(OAMADDR()++, datum);
+		m_oamdmaActive = !!(++m_oamdmaAddress.low);	// i.e. DMA finishes when the low part of the address has wrapped
+	}
+	return taken;
 }

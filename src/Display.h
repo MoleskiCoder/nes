@@ -32,6 +32,7 @@ public:
 	void clearVBlank() { vblankOccurring(false); }
 
 	void triggerOAMDMA(uint8_t page);
+	bool stepOAMDMA();	// true, if taken
 
 private:
 	static bool convertAddress(uint16_t address, size_t& index, bool& writable, bool& readable);
@@ -150,4 +151,7 @@ private:
 
 	EightBit::Ram m_vram = 0x4000;
 	EightBit::Ram m_oamram = 0x100;
+
+	bool m_oamdmaActive = false;
+	EightBit::register16_t m_oamdmaAddress = { { 0 } };
 };

@@ -82,6 +82,8 @@ private:
 
 	const Configuration& m_configuration;
 
+	bool m_oamdmaActive = false;
+
 	void Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu);
 	void Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu);
 

@@ -77,8 +77,18 @@ void Board::Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu) {
 	m_totalCPUCycles += CPU().clockCycles();
 }
 
-int Board::run(int limit) {
-	return CPU().run(limit);
+int Board::run(const int limit) {
+	int current = 0;
+	while (LIKELY(CPU().powered()) && current < limit) {
+		if (UNLIKELY(PPU().stepOAMDMA())) {
+			current += 2;
+		} else {
+			current += CPU().singleStep();
+			if (UNLIKELY(m_oamdmaActive))
+				++current;
+		}
+	}
+	return current;
 }
 
 int Board::runScanLine() {
@@ -120,6 +130,6 @@ int Board::runScanLinesVBlank() {
 void Board::Bus_WrittenByte(const uint16_t address) {
 	if (address == 0x4014) {	// OAMDMA
 		PPU().triggerOAMDMA(DATA());
-		// 513 cycles???
+		m_oamdmaActive = true;
 	}
 }
