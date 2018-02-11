@@ -5,7 +5,7 @@
 
 Computer::Computer(const Configuration& configuration)
 : m_configuration(configuration),
-  m_board(configuration) {
+  m_board(configuration, m_colours) {
 	m_board.WrittenByte.connect(std::bind(&Computer::Board_WrittenByte, this, std::placeholders::_1));
 }
 
@@ -62,6 +62,7 @@ void Computer::initialise() {
 	m_pixelFormat = ::SDL_AllocFormat(m_pixelType);
 	if (m_pixelFormat == nullptr)
 		throwSDLException("Unable to allocate pixel format: ");
+	m_colours.load(m_pixelFormat);
 
 	configureBackground();
 	createBitmapTexture();
@@ -74,7 +75,7 @@ void Computer::configureBackground() const {
 }
 
 void Computer::createBitmapTexture() {
-	m_bitmapTexture = ::SDL_CreateTexture(m_renderer, m_pixelType, SDL_TEXTUREACCESS_STREAMING, Board::RasterWidth, Board::RasterHeight);
+	m_bitmapTexture = ::SDL_CreateTexture(m_renderer, m_pixelType, SDL_TEXTUREACCESS_STREAMING, Display::RasterWidth, Display::RasterHeight);
 	if (m_bitmapTexture == nullptr)
 		throwSDLException("Unable to create bitmap texture");
 }
@@ -128,6 +129,7 @@ void Computer::run() {
 }
 
 void Computer::drawFrame() {
+	verifySDLCall(::SDL_UpdateTexture(m_bitmapTexture, NULL, &(m_board.PPU().pixels()[0]), Display::RasterWidth * sizeof(Uint32)), "Unable to update texture: ");
 	verifySDLCall(
 		::SDL_RenderCopy(m_renderer, m_bitmapTexture, nullptr, nullptr),
 		"Unable to copy texture to renderer");

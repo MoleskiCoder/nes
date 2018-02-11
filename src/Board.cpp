@@ -6,9 +6,9 @@
 #include <iostream>
 #include <iomanip>
 
-Board::Board(const Configuration& configuration)
+Board::Board(const Configuration& configuration, const ColourPalette& colours)
 : m_cpu(*this),
-  m_ppu(*this),
+  m_ppu(*this, colours),
   m_symbols(""),
   m_disassembler(m_cpu, m_symbols),
   m_configuration(configuration) {
@@ -23,6 +23,7 @@ void Board::plug(const std::string& path) {
 }
 
 void Board::reset() {
+	PPU().initialise();
 	EightBit::Ricoh2A03::lower(CPU().RESET());
 }
 
@@ -102,7 +103,7 @@ int Board::runScanLinesBottomBorder() {
 }
 
 int Board::runScanLinesRaster() {
-	return runScanLines(RasterHeight);
+	return runScanLines(Display::RasterHeight);
 }
 
 int Board::runScanLinesVBlankLatency() {

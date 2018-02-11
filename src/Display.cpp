@@ -1,12 +1,25 @@
 #include "stdafx.h"
 #include "Display.h"
 
-Display::Display(EightBit::Bus& bus)
-: m_bus(bus) {
+Display::Display(EightBit::Bus& bus, const ColourPalette& palette)
+: m_bus(bus),
+  m_palette(palette) {
 	bus.WritingByte.connect(std::bind(&Display::Bus_WritingByte, this, std::placeholders::_1));
 	bus.WrittenByte.connect(std::bind(&Display::Bus_WrittenByte, this, std::placeholders::_1));
 	bus.ReadingByte.connect(std::bind(&Display::Bus_ReadingByte, this, std::placeholders::_1));
 	bus.ReadByte.connect(std::bind(&Display::Bus_ReadByte, this, std::placeholders::_1));
+}
+
+const std::vector<uint32_t>& Display::pixels() const {
+	return m_pixels;
+}
+
+void Display::initialise() {
+	m_pixels.resize(RasterWidth * RasterHeight);
+}
+
+void Display::render() {
+	// XXXX
 }
 
 size_t Display::maskAddress(const uint16_t address) {

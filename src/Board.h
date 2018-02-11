@@ -27,21 +27,18 @@ public:
 		PPUCyclesPerCPUCycle = 3,
 		PPUCyclesPerScanLine = 341,
 
-		RasterWidth = 256,
-		RasterHeight = 224,
-
 		ScanLinesVBlankLatency = 2,
 		ScanLinesVBlank = 20,
 		ScanLinesTopBorder = 8,
 		ScanLinesBottomBorder = ScanLinesTopBorder,
-		ScanLinesPerFrame = ScanLinesTopBorder + RasterHeight + ScanLinesBottomBorder + ScanLinesVBlankLatency + ScanLinesVBlank,
+		ScanLinesPerFrame = ScanLinesTopBorder + Display::RasterHeight + ScanLinesBottomBorder + ScanLinesVBlankLatency + ScanLinesVBlank,
 
 		FramesPerSecond = 60,
 		CyclesPerFrame = CPUClockSpeed / FramesPerSecond,
-		CyclesPerLine = CyclesPerFrame / RasterHeight,
+		CyclesPerLine = CyclesPerFrame / Display::RasterHeight,
 	};
 
-	Board(const Configuration& configuration);
+	Board(const Configuration& configuration, const ColourPalette& colours);
 
 	EightBit::Ricoh2A03& CPU() { return m_cpu; }
 	EightBit::Ram& RAM() { return m_ram; }

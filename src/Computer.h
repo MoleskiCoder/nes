@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Board.h"
+#include "Display.h"
+#include "ColourPalette.h"
 
 class Configuration;
 
@@ -27,11 +29,12 @@ private:
 
 	enum {
 		DisplayScale = 2,
-		ScreenWidth = Board::RasterWidth * DisplayScale,
-		ScreenHeight = Board::RasterHeight * DisplayScale,
+		ScreenWidth = Display::RasterWidth * DisplayScale,
+		ScreenHeight = Display::RasterHeight * DisplayScale,
 	};
 
 	const Configuration& m_configuration;
+	ColourPalette m_colours;
 	mutable Board m_board;
 
 	SDL_Window* m_window = nullptr;

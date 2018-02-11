@@ -2,16 +2,23 @@
 
 #include <cstdint>
 #include <array>
+#include <vector>
 #include <Bus.h>
 #include <Ram.h>
 
 #include "Mapper.h"
+#include "ColourPalette.h"
 
 class Display final : public Mapper {
 public:
 	enum {
+
+		RasterWidth = 256,
+		RasterHeight = 224,
+
 		PPU_START = 0x2000,
 		PPU_END = 0x4000,
+
 		idxPPUCTRL = 0,
 		idxPPUMASK,
 		idxPPUSTATUS,
@@ -22,7 +29,7 @@ public:
 		idxPPUDATA,
 	};
 
-	Display(EightBit::Bus& bus);
+	Display(EightBit::Bus& bus, const ColourPalette& palette);
 
 	virtual uint8_t& reference(uint16_t address, bool& rom) final;
 
@@ -33,6 +40,11 @@ public:
 
 	void triggerOAMDMA(uint8_t page);
 	bool stepOAMDMA();	// true, if taken
+
+	const std::vector<uint32_t>& pixels() const;
+
+	void initialise();
+	void render();
 
 private:
 	static size_t maskAddress(uint16_t address);
@@ -157,4 +169,7 @@ private:
 
 	bool m_oamdmaActive = false;
 	EightBit::register16_t m_oamdmaAddress = { { 0 } };
+
+	std::vector<uint32_t> m_pixels;
+	const ColourPalette& m_palette;
 };
