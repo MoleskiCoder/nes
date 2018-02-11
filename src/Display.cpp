@@ -11,7 +11,7 @@ Display::Display(EightBit::Bus& bus)
 
 bool Display::convertAddress(const uint16_t address, size_t& index, bool& writable, bool& readable) {
 
-	if ((address < PPU_START) || (address > PPU_FINISH))
+	if ((address < PPU_START) || (address >= PPU_END))
 		return false;
 
 	index = address & 7;

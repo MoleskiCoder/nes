@@ -46,7 +46,7 @@ public:
 	EightBit::Ricoh2A03& CPU() { return m_cpu; }
 	EightBit::Ram& RAM() { return m_ram; }
 	Display& PPU() { return m_ppu; }
-	EightBit::Ram& APU() { return m_apu; }
+	EightBit::Ram& IO() { return m_io; }
 	Cartridge& cartridge() { return *m_cartridge; }
 
 	void plug(const std::string& path);
@@ -70,8 +70,7 @@ private:
 
 	EightBit::Ram m_ram = 0x800;	// 0000h-07FFh (mirrored to 800h-1FFFh)
 	Display m_ppu;
-	EightBit::Ram m_apu = 0x16;
-	EightBit::Ram m_joysticks = 2;
+	EightBit::Ram m_io = 0x20;
 
 	std::unique_ptr<Cartridge> m_cartridge;
 

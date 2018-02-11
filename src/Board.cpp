@@ -33,20 +33,11 @@ uint8_t& Board::reference(uint16_t address, bool& rom) {
 	if (address < Display::PPU_START)
 		return RAM().reference(address & 0x7ff);
 
-	if (address <= Display::PPU_FINISH)
+	if (address < Display::PPU_END)
 		return PPU().reference(address, rom);
 
-	if (address < 0x4014)
-		return APU().reference(address - 0x4000);
-
-	if (address == 0x4014)
-		return PPU().reference(address, rom);	// Alias for the Sprite DMA register
-
-	if (address == 0x4015)
-		return APU().reference(address - 0x4000);
-
-	if (address < 0x4018)
-		return m_joysticks.reference(address - 0x4016);
+	if (address < 0x4020)
+		return IO().reference(address - Display::PPU_END);
 
 	return cartridge().reference(address, rom);
 }

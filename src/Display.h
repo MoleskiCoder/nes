@@ -11,7 +11,7 @@ class Display final : public Mapper {
 public:
 	enum {
 		PPU_START = 0x2000,
-		PPU_FINISH = 0x3fff,
+		PPU_END = 0x4000,
 		idxPPUCTRL = 0,
 		idxPPUMASK,
 		idxPPUSTATUS,
