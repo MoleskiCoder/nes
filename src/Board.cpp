@@ -89,8 +89,10 @@ int Board::runScanLine() {
 
 int Board::runScanLines(const int lines) {
 	int count = 0;
-	for (int line = 0; line < lines; ++line)
+	for (int line = 0; line < lines; ++line) {
 		count += runScanLine();
+		PPU().render();
+	}
 	return count;
 }
 
@@ -103,7 +105,10 @@ int Board::runScanLinesBottomBorder() {
 }
 
 int Board::runScanLinesRaster() {
-	return runScanLines(Display::RasterHeight);
+	PPU().startRender();
+	const auto returned = runScanLines(Display::RasterHeight);
+	PPU().finishRender();
+	return returned;
 }
 
 int Board::runScanLinesVBlankLatency() {

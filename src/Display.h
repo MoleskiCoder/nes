@@ -46,6 +46,9 @@ public:
 	void initialise();
 	void render();
 
+	void startRender() { m_currentScanLine = 0; }
+	void finishRender() { m_currentScanLine = -1; }
+
 private:
 	static size_t maskAddress(uint16_t address);
 	static bool validAddress(uint16_t address);
@@ -172,4 +175,6 @@ private:
 
 	std::vector<uint32_t> m_pixels;
 	const ColourPalette& m_palette;
+
+	int m_currentScanLine = 0;
 };

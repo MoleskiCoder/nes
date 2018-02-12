@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Display.h"
 
+#include <ctime>
+
 Display::Display(EightBit::Bus& bus, const ColourPalette& palette)
 : m_bus(bus),
   m_palette(palette) {
@@ -16,10 +18,16 @@ const std::vector<uint32_t>& Display::pixels() const {
 
 void Display::initialise() {
 	m_pixels.resize(RasterWidth * RasterHeight);
+	::srand(::time(NULL));
 }
 
 void Display::render() {
-	// XXXX
+	if (m_currentScanLine >= 0) {
+		const auto y = m_currentScanLine++;
+		for (size_t x = 0; x < RasterWidth; ++x) {
+			m_pixels[y * RasterWidth + x] = m_palette.getColour(::rand() % 64);
+		}
+	}
 }
 
 size_t Display::maskAddress(const uint16_t address) {

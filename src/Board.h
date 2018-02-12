@@ -66,8 +66,9 @@ private:
 	EightBit::Ricoh2A03 m_cpu;
 
 	EightBit::Ram m_ram = 0x800;	// 0000h-07FFh (mirrored to 800h-1FFFh)
-	Display m_ppu;
 	EightBit::Ram m_io = 0x20;
+
+	Display m_ppu;
 
 	std::unique_ptr<Cartridge> m_cartridge;
 

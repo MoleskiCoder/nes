@@ -41,7 +41,7 @@ private:
 	SDL_Renderer* m_renderer = nullptr;
 
 	SDL_Texture* m_bitmapTexture = nullptr;
-	Uint32 m_pixelType = 0;
+	Uint32 m_pixelType = SDL_PIXELFORMAT_ARGB8888;
 	SDL_PixelFormat* m_pixelFormat = nullptr;
 
 	int m_frameCycles = 0;
