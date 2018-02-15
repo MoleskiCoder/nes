@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Display.h"
+#include "PatternDefinition.h"
 
 #include <ctime>
 
@@ -24,8 +25,15 @@ void Display::initialise() {
 void Display::render() {
 	if (m_currentScanLine >= 0) {
 		const auto y = m_currentScanLine++;
-		for (size_t x = 0; x < RasterWidth; ++x) {
-			m_pixels[y * RasterWidth + x] = m_palette.getColour(::rand() % 64);
+		const auto row = y / 8;
+		const auto line = y % 8;
+		for (int column = 0; column < 32; ++column) {
+			const int pattern = VRAM().peek(nameTableAddress() + row * 32 + column);
+			const PatternDefinition definition(VRAM(), spritePatternTableAddress(), pattern);
+			const auto rowPattern = definition.get(line);
+			for (size_t x = 0; x < 8; ++x) {
+				m_pixels[y * RasterWidth + (column * 8) + x] = m_palette.getColour(rowPattern[x]);
+			}
 		}
 	}
 }

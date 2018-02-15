@@ -151,6 +151,7 @@
     <ClCompile Include="nes.cpp" />
     <ClCompile Include="NesFile.cpp" />
     <ClCompile Include="NROM.cpp" />
+    <ClCompile Include="PatternDefinition.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -169,6 +170,7 @@
     <ClInclude Include="MMC1.h" />
     <ClInclude Include="NesFile.h" />
     <ClInclude Include="NROM.h" />
+    <ClInclude Include="PatternDefinition.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

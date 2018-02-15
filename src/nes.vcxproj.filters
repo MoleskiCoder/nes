@@ -44,6 +44,9 @@
     <ClCompile Include="ColourPalette.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PatternDefinition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Configuration.h">
@@ -77,6 +80,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ColourPalette.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternDefinition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
