@@ -96,31 +96,24 @@ int Board::runScanLines(const int lines) {
 	return count;
 }
 
-int Board::runScanLinesTopBorder() {
-	return runScanLines(ScanLinesTopBorder);
-}
-
-int Board::runScanLinesBottomBorder() {
-	return runScanLines(ScanLinesBottomBorder);
-}
-
 int Board::runScanLinesRaster() {
+	auto returned = 0;
+	returned += runScanLines(1);
 	PPU().startRender();
-	const auto returned = runScanLines(Display::RasterHeight);
+	returned += runScanLines(Display::RasterHeight);
 	PPU().finishRender();
+	returned += runScanLines(1);
 	return returned;
 }
 
-int Board::runScanLinesVBlankLatency() {
-	return runScanLines(ScanLinesVBlankLatency);
-}
-
 int Board::runScanLinesVBlank() {
+	auto returned = 0;
 	PPU().setVBlank();
 	if (PPU().nmi())
 		EightBit::Processor::lower(CPU().NMI());
-	const auto returned = runScanLines(ScanLinesVBlank);
+	returned += runScanLines(ScanLinesVBlank);
 	PPU().clearVBlank();
+	returned += runScanLines(ScanLinesVBlankLatency);
 	return returned;
 }
 

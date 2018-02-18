@@ -107,9 +107,7 @@ void Computer::run() {
 
 		cycles += Board::CyclesPerFrame;
 
-		cycles -= m_board.runScanLinesTopBorder();
 		cycles -= m_board.runScanLinesRaster();
-		cycles -= m_board.runScanLinesBottomBorder();
 
 		if (graphics) {
 			drawFrame();
@@ -123,7 +121,6 @@ void Computer::run() {
 			}
 		}
 
-		cycles -= m_board.runScanLinesVBlankLatency();
 		cycles -= m_board.runScanLinesVBlank();
 	}
 }

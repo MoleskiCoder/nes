@@ -29,13 +29,11 @@ public:
 
 		ScanLinesVBlankLatency = 2,
 		ScanLinesVBlank = 20,
-		ScanLinesTopBorder = 8,
-		ScanLinesBottomBorder = ScanLinesTopBorder,
-		ScanLinesPerFrame = ScanLinesTopBorder + Display::RasterHeight + ScanLinesBottomBorder + ScanLinesVBlankLatency + ScanLinesVBlank,
+		ScanLinesPerFrame = 1 + Display::RasterHeight + 1 + ScanLinesVBlankLatency + ScanLinesVBlank,
 
 		FramesPerSecond = 60,
 		CyclesPerFrame = CPUClockSpeed / FramesPerSecond,
-		CyclesPerLine = CyclesPerFrame / Display::RasterHeight,
+		CyclesPerLine = CyclesPerFrame / ScanLinesPerFrame,
 	};
 
 	Board(const Configuration& configuration, const ColourPalette& colours);
@@ -49,14 +47,7 @@ public:
 	void plug(const std::string& path);
 	void reset();
 
-	int run(int limit);
-	int runScanLine();
-	int runScanLines(int lines);
-
-	int runScanLinesTopBorder();
 	int runScanLinesRaster();
-	int runScanLinesBottomBorder();
-	int runScanLinesVBlankLatency();
 	int runScanLinesVBlank();
 
 protected:
@@ -85,4 +76,8 @@ private:
 	void Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu);
 
 	void Bus_WrittenByte(uint16_t address);
+
+	int run(int limit);
+	int runScanLine();
+	int runScanLines(int lines);
 };
