@@ -2,8 +2,6 @@
 #include "Display.h"
 #include "PatternDefinition.h"
 
-#include <ctime>
-
 Display::Display(EightBit::Bus& bus, const ColourPalette& palette)
 : m_bus(bus),
   m_palette(palette) {
@@ -19,23 +17,68 @@ const std::vector<uint32_t>& Display::pixels() const {
 
 void Display::initialise() {
 	m_pixels.resize(RasterWidth * RasterHeight);
-	::srand(::time(NULL));
 }
 
 void Display::render() {
 	if (m_currentScanLine >= 0) {
-		const auto y = m_currentScanLine++;
-		const auto row = y / 8;
-		const auto line = y % 8;
-		for (int column = 0; column < 32; ++column) {
-			const int pattern = VRAM().peek(nameTableAddress() + row * 32 + column);
-			const PatternDefinition definition(VRAM(), spritePatternTableAddress(), pattern);
-			const auto rowPattern = definition.get(line);
-			for (size_t x = 0; x < 8; ++x) {
-				m_pixels[y * RasterWidth + (column * 8) + x] = m_palette.getColour(rowPattern[x]);
+		if (showBackground()) {
+
+			const auto nameTable = nameTableAddress();
+			const auto attributeTable = attributeTableAddress();
+
+			const auto y = m_currentScanLine++;
+
+			const auto row = y >> 3;
+			const auto line = y & EightBit::Processor::Mask3;
+
+			for (int column = 0; column < 32; ++column) {
+
+				const int selectedPalette = selectPalette(row, column);
+				const auto palette = buildBackgroundPalette(selectedPalette);
+
+				const int pattern = VRAM().peek(nameTable + (row << 5) + column);
+				const PatternDefinition definition(VRAM(), spritePatternTableAddress(), pattern);
+				const auto rowPattern = definition.get(line);
+
+				for (size_t x = 0; x < 8; ++x)
+					m_pixels[y * RasterWidth + (column << 3) + x] = m_palette.getColour(palette[rowPattern[x]]);
 			}
 		}
 	}
+}
+
+std::array<uint8_t, 4> Display::buildBackgroundPalette(const int selected) {
+	std::array<uint8_t, 4> palette;
+	palette[0] = VRAM().peek(BasePaletteAddress);
+	palette[1] = VRAM().peek(BasePaletteAddress + (selected << 2) + 1);
+	palette[2] = VRAM().peek(BasePaletteAddress + (selected << 2) + 2);
+	palette[3] = VRAM().peek(BasePaletteAddress + (selected << 2) + 3);
+	return palette;
+}
+
+int Display::selectPalette(const int row, const int column) {
+
+	const auto attributeRow = row >> 2;
+	const auto attributeColumn = column >> 2;
+
+	const auto attribute = VRAM().peek((attributeRow << 3) + attributeColumn);
+
+	const auto top = row & 1;
+	const auto left = column & 1;
+
+	const auto bottom = !top;
+	const auto right = !left;
+
+	if (top && left)
+		return attribute && 0b11;
+	if (top && right)
+		return attribute && 0b1100;
+	if (bottom && left)
+		return attribute && 0b110000;
+	if (bottom && right)
+		return attribute && 0b11000000;
+
+	UNREACHABLE;
 }
 
 size_t Display::maskAddress(const uint16_t address) {
@@ -54,7 +97,7 @@ size_t Display::convertAddress(const uint16_t address, bool& writable, bool& rea
 
 	writable = readable = false;
 
-	const auto index = maskAddress(address & 7);
+	const auto index = maskAddress(address);
 	switch (index) {
 	case idxPPUSTATUS:
 		readable = true;

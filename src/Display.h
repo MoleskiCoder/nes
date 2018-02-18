@@ -13,8 +13,10 @@ class Display final : public Mapper {
 public:
 	enum {
 
+		BasePaletteAddress = 0x3f00,
+
 		RasterWidth = 256,
-		RasterHeight = 224,
+		RasterHeight = 240,
 
 		PPU_START = 0x2000,
 		PPU_END = 0x4000,
@@ -71,6 +73,9 @@ private:
 	uint8_t& ppuScrollY() { return m_ppuScrollPosition[1]; }
 	uint16_t ppuAddress() const { return (m_ppuAddress[0] << 8) | m_ppuAddress[1]; }
 
+	int selectPalette(int row, int column);
+	std::array<uint8_t, 4> buildBackgroundPalette(int selected);
+
 	void incrementPPUAddress() {
 		EightBit::register16_t address;
 		address.word = ppuAddress() + addressIncrement();
@@ -82,6 +87,7 @@ private:
 
 	// Control register 1 wrappers:
 	uint16_t nameTableAddress() const { return m_registers[idxPPUCTRL].decodedPPUCTRL.nameTableAddress(); }
+	uint16_t attributeTableAddress() const { return nameTableAddress() + (0x400 - 64); }
 	int addressIncrement() const { return m_registers[idxPPUCTRL].decodedPPUCTRL.addressIncrement(); }
 	uint16_t spritePatternTableAddress() const { return m_registers[idxPPUCTRL].decodedPPUCTRL.spritePatternTableAddress(); }
 	uint16_t backgroundPatternTableAddress() const { return m_registers[idxPPUCTRL].decodedPPUCTRL.backgroundPatternTableAddress(); }
