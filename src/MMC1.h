@@ -14,10 +14,10 @@ class MMC1 final : public Mapper {
 public:
 	MMC1(EightBit::Bus& bus, const NesFile& nesFile);
 
-	virtual uint8_t& reference(uint16_t address, bool& rom) final;
+	virtual uint8_t& reference(uint16_t address) final;
 
 private:
-	void Bus_WrittenByte(uint16_t address);
+	void Bus_WrittenByte(const EightBit::EventArgs& e);
 
 	void resetRegisters();
 

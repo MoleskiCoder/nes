@@ -25,7 +25,7 @@ public:
 	void run();
 
 private:
-	void Board_WrittenByte(uint16_t address);
+	void Board_WrittenByte(const EightBit::EventArgs& e);
 
 	enum {
 		DisplayScale = 2,

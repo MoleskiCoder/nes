@@ -151,8 +151,9 @@ void Computer::dumpRendererInformation(::SDL_RendererInfo info) {
 	::SDL_Log("%s: software=%d, accelerated=%d, vsync=%d, target texture=%d", name, software, accelerated, vsync, targetTexture);
 }
 
-void Computer::Board_WrittenByte(const uint16_t address) {
+void Computer::Board_WrittenByte(const EightBit::EventArgs& e) {
 	// for Blargg tests
+	const auto address = m_board.ADDRESS().word;
 	if (address >= 0x6004) {
 		const auto contents = m_board.peek(address);
 		std::cout << (char)contents;

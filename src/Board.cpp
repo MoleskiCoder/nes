@@ -24,23 +24,21 @@ void Board::plug(const std::string& path) {
 
 void Board::reset() {
 	PPU().initialise();
-	EightBit::Ricoh2A03::lower(CPU().RESET());
+	CPU().reset();
 }
 
-uint8_t& Board::reference(uint16_t address, bool& rom) {
-
-	rom = false;
+uint8_t& Board::reference(uint16_t address) {
 
 	if (address < Display::PPU_START)
 		return RAM().reference(address & 0x7ff);
 
 	if (address < Display::PPU_END)
-		return PPU().reference(address, rom);
+		return PPU().reference(address);
 
 	if (address < 0x4020)
 		return IO().reference(address - Display::PPU_END);
 
-	return cartridge().reference(address, rom);
+	return cartridge().reference(address);
 }
 
 void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
@@ -66,7 +64,7 @@ void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
 }
 
 void Board::Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu) {
-	m_totalCPUCycles += CPU().clockCycles();
+	m_totalCPUCycles += CPU().cycles();
 }
 
 int Board::run(const int limit) {
@@ -75,7 +73,7 @@ int Board::run(const int limit) {
 		if (UNLIKELY(PPU().stepOAMDMA())) {
 			current += 2;
 		} else {
-			current += CPU().singleStep();
+			current += CPU().step();
 			if (UNLIKELY(m_oamdmaActive))
 				++current;
 		}
@@ -117,8 +115,8 @@ int Board::runScanLinesVBlank() {
 	return returned;
 }
 
-void Board::Bus_WrittenByte(const uint16_t address) {
-	if (UNLIKELY(address == 0x4014)) {	// OAMDMA
+void Board::Bus_WrittenByte(const EightBit::EventArgs& e) {
+	if (UNLIKELY(ADDRESS().word == 0x4014)) {	// OAMDMA
 		PPU().triggerOAMDMA(DATA());
 		m_oamdmaActive = true;
 	}

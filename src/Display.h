@@ -33,7 +33,7 @@ public:
 
 	Display(EightBit::Bus& bus, const ColourPalette& palette);
 
-	virtual uint8_t& reference(uint16_t address, bool& rom) final;
+	virtual uint8_t& reference(uint16_t address) final;
 
 	bool nmi() const { return m_registers[idxPPUCTRL].decodedPPUCTRL.nmi(); }
 
@@ -57,10 +57,10 @@ private:
 	static bool invalidAddress(uint16_t address);
 	static size_t convertAddress(uint16_t address, bool& writable, bool& readable);
 
-	void Bus_WritingByte(uint16_t address);
-	void Bus_WrittenByte(uint16_t address);
-	void Bus_ReadingByte(uint16_t address);
-	void Bus_ReadByte(uint16_t address);
+	void Bus_WritingByte(const EightBit::EventArgs& e);
+	void Bus_WrittenByte(const EightBit::EventArgs& e);
+	void Bus_ReadingByte(const EightBit::EventArgs& e);
+	void Bus_ReadByte(const EightBit::EventArgs& e);
 
 	EightBit::Bus& BUS() { return m_bus; }
 	EightBit::Ram& VRAM() { return m_vram; }

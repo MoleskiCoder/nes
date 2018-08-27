@@ -46,9 +46,8 @@ void MMC1::resetRegisters() {
 	m_controls[3].decoded3.reset();
 }
 
-uint8_t& MMC1::reference(uint16_t address, bool& rom) {
+uint8_t& MMC1::reference(uint16_t address) {
 
-	rom = false;
 	if (address < 0x8000)
 		return PRGRAM()[address - 0x6000];
 
@@ -57,19 +56,19 @@ uint8_t& MMC1::reference(uint16_t address, bool& rom) {
 	const auto register3 = m_controls[3].decoded3;
 	const auto prgRomBank = register3.prgRomBank;
 
-	rom = true;
 	if (address < 0xC000) {
 		const size_t lowBank = prgRomBankMode == register0_t::BankLowSixteenK ? prgRomBank : 0;
-		return PRG()[lowBank][address - 0x8000];
+		return m_temporary = PRG()[lowBank][address - 0x8000];
 	}
 
 	const auto roms = PRG().size();
 	const size_t highBank = prgRomBankMode == register0_t::BankHighSixteenK ? prgRomBank : roms - 1;
-	return PRG()[highBank][address - 0xc000];
+	return m_temporary = PRG()[highBank][address - 0xc000];
 }
 
-void MMC1::Bus_WrittenByte(const uint16_t address) {
+void MMC1::Bus_WrittenByte(const EightBit::EventArgs& e) {
 
+	const auto address = m_bus.ADDRESS().word;
 	if (LIKELY(address < 0x8000))
 		return;
 

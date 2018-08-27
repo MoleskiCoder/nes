@@ -32,16 +32,14 @@ NROM::NROM(const NesFile& nesFile) {
 	PRGRAM().resize(0x2000);
 }
 
-uint8_t& NROM::reference(uint16_t address, bool& rom) {
+uint8_t& NROM::reference(uint16_t address) {
 
-	rom = false;
 	if (address < 0x8000)
 		return PRGRAM()[address - 0x6000];
 
-	rom = true;
 	if (address < 0xC000)
-		return PRG()[0][address - 0x8000];
+		return m_temporary = PRG()[0][address - 0x8000];
 
 	const auto roms = PRG().size();
-	return PRG()[roms - 1][address - 0xc000];
+	return m_temporary = PRG()[roms - 1][address - 0xc000];
 }

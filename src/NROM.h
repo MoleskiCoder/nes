@@ -11,7 +11,7 @@ class NROM final : public Mapper {
 public:
 	NROM(const NesFile& nesFile);
 
-	virtual uint8_t& reference(uint16_t address, bool& rom) final;
+	virtual uint8_t& reference(uint16_t address) final;
 
 private:
 	std::vector<uint8_t>& PRGRAM() { return m_prgRam; }

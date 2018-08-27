@@ -120,15 +120,16 @@ size_t Display::convertAddress(const uint16_t address, bool& writable, bool& rea
 	return index;
 }
 
-uint8_t& Display::reference(const uint16_t address, bool& rom) {
+uint8_t& Display::reference(const uint16_t address) {
 	bool writable = false, readable = false;
 	const auto index = convertAddress(address, writable, readable);
-	rom = !writable;
-	return m_registers[index].raw;
+	const auto rom = !writable;
+	return rom ? m_temporary = m_registers[index].raw : m_registers[index].raw;
 }
 
-void Display::Bus_WritingByte(const uint16_t address) {
+void Display::Bus_WritingByte(const EightBit::EventArgs& e) {
 
+	const auto address = BUS().ADDRESS().word;
 	if (invalidAddress(address))
 		return;
 
@@ -155,8 +156,9 @@ void Display::Bus_WritingByte(const uint16_t address) {
 	}
 }
 
-void Display::Bus_WrittenByte(const uint16_t address) {
+void Display::Bus_WrittenByte(const EightBit::EventArgs& e) {
 
+	const auto address = BUS().ADDRESS().word;
 	if (invalidAddress(address))
 		return;
 
@@ -190,8 +192,9 @@ void Display::Bus_WrittenByte(const uint16_t address) {
 	}
 }
 
-void Display::Bus_ReadingByte(const uint16_t address) {
+void Display::Bus_ReadingByte(const EightBit::EventArgs& e) {
 
+	const auto address = BUS().ADDRESS().word;
 	if (invalidAddress(address))
 		return;
 
@@ -219,8 +222,9 @@ void Display::Bus_ReadingByte(const uint16_t address) {
 	}
 }
 
-void Display::Bus_ReadByte(const uint16_t address) {
+void Display::Bus_ReadByte(const EightBit::EventArgs& e) {
 
+	const auto address = BUS().ADDRESS().word;
 	if (invalidAddress(address))
 		return;
 

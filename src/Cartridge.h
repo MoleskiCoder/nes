@@ -12,7 +12,7 @@ class Cartridge final {
 public:
 	Cartridge(EightBit::Bus& bus, const std::string& path);
 
-	uint8_t& reference(uint16_t address, bool& rom);
+	uint8_t& reference(uint16_t address);
 
 private:
 	EightBit::Bus& m_bus;

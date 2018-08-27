@@ -11,7 +11,6 @@
 #include <cassert>
 
 #include <Memory.h>
-#include <Rom.h>
 #include <Ram.h>
 #include <Bus.h>
 #include <Register.h>

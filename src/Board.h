@@ -5,7 +5,6 @@
 #include <string>
 #include <memory>
 
-#include <Rom.h>
 #include <Ram.h>
 #include <Bus.h>
 #include <Register.h>
@@ -51,7 +50,7 @@ public:
 	int runScanLinesVBlank();
 
 protected:
-	virtual uint8_t& reference(uint16_t address, bool& rom);
+	virtual uint8_t& reference(uint16_t address) final;
 
 private:
 	EightBit::Ricoh2A03 m_cpu;
@@ -75,7 +74,7 @@ private:
 	void Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu);
 	void Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu);
 
-	void Bus_WrittenByte(uint16_t address);
+	void Bus_WrittenByte(const EightBit::EventArgs& e);
 
 	int run(int limit);
 	int runScanLine();
