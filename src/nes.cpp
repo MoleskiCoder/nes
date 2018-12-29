@@ -20,7 +20,7 @@ int main(int, char*[])
 
 	// Mapper 0
 	
-	//computer.plug(romDirectory + "/nestest.nes");	// pass
+	computer.plug(romDirectory + "/nestest.nes");	// pass
 	
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/01-basics.nes");		// pass
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/02-implied.nes");	// pass
@@ -41,8 +41,25 @@ int main(int, char*[])
 	
 	// Mapper 1?
 
-	computer.plug(romDirectory + "/instr_test-v5/official_only.nes");
-	//computer.plug(romDirectory + "/instr_test-v5/all_instrs.nes");
+	//computer.plug(romDirectory + "/instr_test-v5/official_only.nes");				// pass
+	//computer.plug(romDirectory + "/instr_test-v5/all_instrs.nes");				// fail
+
+	// Unknown
+	//computer.plug(romDirectory + "/blargg_ppu_tests_2005.09.15b/palette_ram.nes");		// pass
+	//computer.plug(romDirectory + "/blargg_ppu_tests_2005.09.15b/power_up_palette.nes");	// fail
+	//computer.plug(romDirectory + "/blargg_ppu_tests_2005.09.15b/sprite_ram.nes");			// pass
+	//computer.plug(romDirectory + "/blargg_ppu_tests_2005.09.15b/vbl_clear_time.nes");		// fail: $02 (VBL flag cleared too soon)
+	//computer.plug(romDirectory + "/blargg_ppu_tests_2005.09.15b/vram_access.nes");		// fail $02 (VRAM reads should be delayed in a buffer)
+
+	//computer.plug(romDirectory + "/full_palette/full_palette.nes");
+	//computer.plug(romDirectory + "/color_test.nes");
+	//computer.plug(romDirectory + "/oam_read/oam_read.nes");				// Pass
+	//computer.plug(romDirectory + "/oam_stress/oam_stress.nes");				// fail
+
+	// Games
+	//computer.plug(romDirectory + "/Pac-Mania (USA) (Unl).nes");
+	//computer.plug(romDirectory + "/Super Mario Bros (E).nes");
+	//computer.plug(romDirectory + "/Donkey Kong Classics (U).nes");
 
 	try {
 		computer.run();

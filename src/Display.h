@@ -3,13 +3,14 @@
 #include <cstdint>
 #include <array>
 #include <vector>
+
 #include <Bus.h>
 #include <Ram.h>
+#include <Mapper.h>
 
-#include "Mapper.h"
 #include "ColourPalette.h"
 
-class Display final : public Mapper {
+class Display final : public EightBit::Mapper {
 public:
 	enum {
 
@@ -33,9 +34,9 @@ public:
 
 	Display(EightBit::Bus& bus, const ColourPalette& palette);
 
-	virtual uint8_t& reference(uint16_t address) final;
+	virtual EightBit::MemoryMapping mapping(uint16_t address) final;
 
-	bool nmi() const { return m_registers[idxPPUCTRL].decodedPPUCTRL.nmi(); }
+	bool nmi() const { return PPUCTRL().nmi(); }
 
 	void setVBlank() { vblankOccurring(true); }
 	void clearVBlank() { vblankOccurring(false); }
@@ -52,10 +53,12 @@ public:
 	void finishRender() { m_currentScanLine = -1; }
 
 private:
-	static size_t maskAddress(uint16_t address);
+	static uint16_t addressMask() { return 7;  }
+	static size_t maskAddress(const uint16_t address) { return address & addressMask(); }
+
 	static bool validAddress(uint16_t address);
 	static bool invalidAddress(uint16_t address);
-	static size_t convertAddress(uint16_t address, bool& writable, bool& readable);
+	static EightBit::MemoryMapping::AccessLevel convertAddress(uint16_t address);
 
 	void Bus_WritingByte(const EightBit::EventArgs& e);
 	void Bus_WrittenByte(const EightBit::EventArgs& e);
@@ -66,8 +69,8 @@ private:
 	EightBit::Ram& VRAM() { return m_vram; }
 	EightBit::Ram& OAMRAM() { return m_oamram; }
 
-	uint8_t& OAMDATA() { return m_registers[idxOAMDATA].raw; }
-	uint8_t& OAMADDR() { return m_registers[idxOAMADDR].raw; }
+	uint8_t& OAMDATA() { return access(idxOAMDATA).raw; }
+	uint8_t& OAMADDR() { return access(idxOAMADDR).raw; }
 
 	uint8_t& ppuScrollX() { return m_ppuScrollPosition[0]; }
 	uint8_t& ppuScrollY() { return m_ppuScrollPosition[1]; }
@@ -86,26 +89,26 @@ private:
 	EightBit::Bus& m_bus;
 
 	// Control register 1 wrappers:
-	uint16_t nameTableAddress() const { return m_registers[idxPPUCTRL].decodedPPUCTRL.nameTableAddress(); }
+	uint16_t nameTableAddress() const { return PPUCTRL().nameTableAddress(); }
 	uint16_t attributeTableAddress() const { return nameTableAddress() + (0x400 - 64); }
-	int addressIncrement() const { return m_registers[idxPPUCTRL].decodedPPUCTRL.addressIncrement(); }
-	uint16_t spritePatternTableAddress() const { return m_registers[idxPPUCTRL].decodedPPUCTRL.spritePatternTableAddress(); }
-	uint16_t backgroundPatternTableAddress() const { return m_registers[idxPPUCTRL].decodedPPUCTRL.backgroundPatternTableAddress(); }
-	int spriteHeight() const { return m_registers[idxPPUCTRL].decodedPPUCTRL.spriteHeight(); }
+	int addressIncrement() const { return PPUCTRL().addressIncrement(); }
+	uint16_t spritePatternTableAddress() const { return PPUCTRL().spritePatternTableAddress(); }
+	uint16_t backgroundPatternTableAddress() const { return PPUCTRL().backgroundPatternTableAddress(); }
+	int spriteHeight() const { return PPUCTRL().spriteHeight(); }
 
 	// Control register 2 wrappers:
-	bool colour() const { return m_registers[idxPPUMASK].decodedPPUMASK.colour(); }
-	bool clipBackground() const { return m_registers[idxPPUMASK].decodedPPUMASK.clipBackground(); }
-	bool clipSprites() const { return m_registers[idxPPUMASK].decodedPPUMASK.clipSprites(); }
-	bool showBackground() const { return m_registers[idxPPUMASK].decodedPPUMASK.showBackground(); }
-	bool showSprites() const { return m_registers[idxPPUMASK].decodedPPUMASK.showSprites(); }
-	int backgroundIntensity() const { return m_registers[idxPPUMASK].decodedPPUMASK.backgroundIntensity(); }
+	bool colour() const { return PPUMASK().colour(); }
+	bool clipBackground() const { return PPUMASK().clipBackground(); }
+	bool clipSprites() const { return PPUMASK().clipSprites(); }
+	bool showBackground() const { return PPUMASK().showBackground(); }
+	bool showSprites() const { return PPUMASK().showSprites(); }
+	int backgroundIntensity() const { return PPUMASK().backgroundIntensity(); }
 
 	// Status register wrappers
-	void ignoreVramWrites(bool value) { m_registers[idxPPUSTATUS].decodedPPUSTATUS.ignoreVramWrites(value); }
-	void excessiveScanlineSprites(bool value) { m_registers[idxPPUSTATUS].decodedPPUSTATUS.excessiveScanlineSprites(value); }
-	void spriteZeroHit(bool value) { m_registers[idxPPUSTATUS].decodedPPUSTATUS.spriteZeroHit(value); }
-	void vblankOccurring(bool value) { m_registers[idxPPUSTATUS].decodedPPUSTATUS.vblankOccurring(value); }
+	void ignoreVramWrites(bool value) { PPUSTATUS().ignoreVramWrites(value); }
+	void excessiveScanlineSprites(bool value) { PPUSTATUS().excessiveScanlineSprites(value); }
+	void spriteZeroHit(bool value) { PPUSTATUS().spriteZeroHit(value); }
+	void vblankOccurring(bool value) { PPUSTATUS().vblankOccurring(value); }
 
 	// PPUCTRL
 	struct control_register_1_t {
@@ -163,7 +166,19 @@ private:
 		status_register_t decodedPPUSTATUS;
 	};
 
-	std::array<register_t, 8> m_registers;
+	register_t access(const size_t i) const { return { m_registers.peek(i) }; }
+	register_t& access(const size_t i) { return (register_t&)m_registers.reference(i); }
+
+	control_register_1_t PPUCTRL() const { return access(idxPPUCTRL).decodedPPUCTRL; }
+	control_register_1_t& PPUCTRL() { return access(idxPPUCTRL).decodedPPUCTRL; }
+
+	control_register_2_t PPUMASK() const { return access(idxPPUMASK).decodedPPUMASK; }
+	control_register_2_t& PPUMASK() { return access(idxPPUMASK).decodedPPUMASK; }
+
+	status_register_t PPUSTATUS() const { return access(idxPPUSTATUS).decodedPPUSTATUS; }
+	status_register_t& PPUSTATUS() { return access(idxPPUSTATUS).decodedPPUSTATUS; }
+
+	EightBit::Ram m_registers = 8;
 
 	// PPUSCROLL
 	size_t m_ppuScrollLatch : 1;
@@ -177,7 +192,7 @@ private:
 	EightBit::Ram m_oamram = 0x100;
 
 	bool m_oamdmaActive = false;
-	EightBit::register16_t m_oamdmaAddress = { { 0 } };
+	EightBit::register16_t m_oamdmaAddress = { 0, 0 };
 
 	std::vector<uint32_t> m_pixels;
 	const ColourPalette& m_palette;

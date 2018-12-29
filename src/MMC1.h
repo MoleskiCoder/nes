@@ -5,29 +5,33 @@
 #include <array>
 
 #include <Bus.h>
+#include <Mapper.h>
+#include <Ram.h>
+#include <Rom.h>
+#include <UnusedMemory.h>
 
-#include "Mapper.h"
-#include "NesFile.h"
+class NesFile;
 
 // AKA Mapper 1
-class MMC1 final : public Mapper {
+class MMC1 final : public EightBit::Mapper {
 public:
 	MMC1(EightBit::Bus& bus, const NesFile& nesFile);
 
-	virtual uint8_t& reference(uint16_t address) final;
+	virtual EightBit::MemoryMapping mapping(uint16_t address) final;
 
 private:
 	void Bus_WrittenByte(const EightBit::EventArgs& e);
 
 	void resetRegisters();
 
-	std::vector<uint8_t>& PRGRAM() { return m_prgRam; }
-	std::vector<std::vector<uint8_t>>& PRG() { return m_prg; }
-	std::vector<std::vector<uint8_t>>& CHR() { return m_chr; }
+	auto& PRGRAM() { return m_prgRam; }
+	auto& PRG() { return m_prg; }
+	auto& CHR() { return m_chr; }
 
-	std::vector<uint8_t> m_prgRam;
-	std::vector<std::vector<uint8_t>> m_prg;
-	std::vector<std::vector<uint8_t>> m_chr;
+	EightBit::UnusedMemory m_unused6000 = { 0x6000, 0xff };
+	EightBit::Ram m_prgRam = 0x2000;
+	std::vector<EightBit::Rom> m_prg;
+	std::vector<EightBit::Rom> m_chr;
 
 	EightBit::Bus& m_bus;
 

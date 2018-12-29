@@ -11,6 +11,7 @@
 
 #include <Ricoh2A03.h>
 #include <Disassembly.h>
+#include <Symbols.h>
 
 #include "Configuration.h"
 #include "Cartridge.h"
@@ -49,8 +50,8 @@ public:
 	int runScanLinesRaster();
 	int runScanLinesVBlank();
 
-protected:
-	virtual uint8_t& reference(uint16_t address) final;
+	virtual void initialise() final;
+	virtual EightBit::MemoryMapping mapping(uint16_t address) final;
 
 private:
 	EightBit::Ricoh2A03 m_cpu;

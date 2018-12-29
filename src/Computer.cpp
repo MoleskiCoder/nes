@@ -88,6 +88,13 @@ void Computer::run() {
 
 	m_board.reset();
 
+	// Nestest...
+	cpu.raise(cpu.RESET());
+	cpu.PC().word = 0xC000;	// Hack!!
+	cpu.X() = 0x00;			// Hack!!
+	cpu.P() |= 0x04;		// Hack!!
+	cpu.S() = 0xFD;			// Hack!!
+
 	auto cycles = 0;
 
 	auto graphics = m_configuration.isDrawGraphics();

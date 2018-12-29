@@ -4,6 +4,8 @@
 #include <cassert>
 #include <functional>
 
+#include "NesFile.h"
+
 MMC1::MMC1(EightBit::Bus& bus, const NesFile& nesFile)
 : m_bus(bus),
   m_shiftRegister(0) {
@@ -12,27 +14,13 @@ MMC1::MMC1(EightBit::Bus& bus, const NesFile& nesFile)
 
 	const auto sizePRGROM = nesFile.getSizePRGROM();
 	PRG().resize(sizePRGROM);
-	for (size_t i = 0; i != sizePRGROM; ++i) {
-		auto& rom = PRG()[i];
-		rom.resize(0x4000);
-		std::copy_n(
-			content.cbegin() + 16 + 0x4000 * i,
-			0x4000,
-			rom.begin());
-	}
+	for (size_t i = 0; i != sizePRGROM; ++i)
+		PRG()[i].load(content, 0, 16 + 0x4000 * i, 0x4000);
 
 	const auto sizeCHRROM = nesFile.getSizeCHRROM();
 	CHR().resize(sizeCHRROM);
-	for (size_t i = 0; i != sizeCHRROM; ++i) {
-		auto& rom = CHR()[i];
-		rom.resize(0x2000);
-		std::copy_n(
-			content.cbegin() + 16 + 0x4000 * sizePRGROM + 0x2000 * i,
-			0x2000,
-			rom.begin());
-	}
-
-	PRGRAM().resize(0x2000);
+	for (size_t i = 0; i != sizeCHRROM; ++i)
+		CHR()[i].load(content, 0, 16 + 0x4000 * sizePRGROM + 0x2000 * i, 0x2000);
 
 	resetRegisters();
 
@@ -46,10 +34,13 @@ void MMC1::resetRegisters() {
 	m_controls[3].decoded3.reset();
 }
 
-uint8_t& MMC1::reference(uint16_t address) {
+EightBit::MemoryMapping MMC1::mapping(const uint16_t address) {
+
+	if (address < 0x6000)
+		return { m_unused6000, 0, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadOnly };
 
 	if (address < 0x8000)
-		return PRGRAM()[address - 0x6000];
+		return { PRGRAM(), 0, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadWrite };
 
 	const auto register0 = m_controls[0].decoded0;
 	const auto prgRomBankMode = (register0_t::prg_rom_bank_mode_t)(register0.prgRomBankMode);
@@ -58,12 +49,12 @@ uint8_t& MMC1::reference(uint16_t address) {
 
 	if (address < 0xC000) {
 		const size_t lowBank = prgRomBankMode == register0_t::BankLowSixteenK ? prgRomBank : 0;
-		return m_temporary = PRG()[lowBank][address - 0x8000];
+		return { PRG()[lowBank], 0x8000, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadOnly };
 	}
 
 	const auto roms = PRG().size();
 	const size_t highBank = prgRomBankMode == register0_t::BankHighSixteenK ? prgRomBank : roms - 1;
-	return m_temporary = PRG()[highBank][address - 0xc000];
+	return { PRG()[highBank], 0xc000, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadOnly };
 }
 
 void MMC1::Bus_WrittenByte(const EightBit::EventArgs& e) {

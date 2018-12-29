@@ -23,8 +23,8 @@ Cartridge::Cartridge(EightBit::Bus& bus, const std::string& path)
 	}
 }
 
-uint8_t& Cartridge::reference(uint16_t address) {
+EightBit::MemoryMapping Cartridge::mapping(const uint16_t address) {
 	if (address < 0x4018)
 		throw new std::domain_error("Address is too low. i.e. not a cartridge address");
-	return m_mapper->reference(address);
+	return m_mapper->mapping(address);
 }

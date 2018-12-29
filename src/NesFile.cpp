@@ -28,7 +28,7 @@ void NesFile::load(const std::string& path) {
 
 	file.open(path, std::ios::binary | std::ios::ate);
 
-	EightBit::Memory::load(file, m_content);
+	EightBit::Rom::load(file, m_content);
 	std::copy_n(m_content.cbegin(), sizeof(m_header.raw), m_header.raw);
 
 	file.close();

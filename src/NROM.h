@@ -3,22 +3,24 @@
 #include <cstdint>
 #include <vector>
 
-#include "Mapper.h"
-#include "NesFile.h"
+#include <Mapper.h>
+#include <Rom.h>
+#include <UnusedMemory.h>
+
+class NesFile;
 
 // AKA Mapper 0
-class NROM final : public Mapper {
+class NROM final : public EightBit::Mapper {
 public:
 	NROM(const NesFile& nesFile);
 
-	virtual uint8_t& reference(uint16_t address) final;
+	virtual EightBit::MemoryMapping mapping(uint16_t address) final;
 
 private:
-	std::vector<uint8_t>& PRGRAM() { return m_prgRam; }
-	std::vector<std::vector<uint8_t>>& PRG() { return m_prg; }
-	std::vector<std::vector<uint8_t>>& CHR() { return m_chr; }
+	auto& PRG() { return m_prg; }
+	auto& CHR() { return m_chr; }
 
-	std::vector<uint8_t> m_prgRam;
-	std::vector<std::vector<uint8_t>> m_prg;
-	std::vector<std::vector<uint8_t>> m_chr;
+	EightBit::UnusedMemory m_unused8000 = { 0x8000, 0xff };
+	std::vector<EightBit::Rom> m_prg;
+	std::vector<EightBit::Rom> m_chr;
 };

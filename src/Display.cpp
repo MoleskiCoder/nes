@@ -81,10 +81,6 @@ int Display::selectPalette(const int row, const int column) {
 	UNREACHABLE;
 }
 
-size_t Display::maskAddress(const uint16_t address) {
-	return address & 7;
-}
-
 bool Display::validAddress(const uint16_t address) {
 	return (address >= PPU_START) && (address < PPU_END);
 }
@@ -93,38 +89,26 @@ bool Display::invalidAddress(const uint16_t address) {
 	return !validAddress(address);
 }
 
-size_t Display::convertAddress(const uint16_t address, bool& writable, bool& readable) {
-
-	writable = readable = false;
-
-	const auto index = maskAddress(address);
-	switch (index) {
+EightBit::MemoryMapping::AccessLevel Display::convertAddress(const uint16_t address) {
+	switch (maskAddress(address)) {
 	case idxPPUSTATUS:
-		readable = true;
-		break;
+		return EightBit::MemoryMapping::AccessLevel::ReadOnly;
 	case idxOAMDATA:
 	case idxPPUDATA:
-		readable = writable = true;
-		break;
+		return EightBit::MemoryMapping::AccessLevel::ReadWrite;
 	case idxPPUCTRL:
 	case idxPPUMASK:
 	case idxOAMADDR:
 	case idxPPUSCROLL:
 	case idxPPUADDR:
-		writable = true;
-		break;
+		return EightBit::MemoryMapping::AccessLevel::WriteOnly;
 	default:
-		UNREACHABLE;
+		return EightBit::MemoryMapping::AccessLevel::Unknown;
 	}
-
-	return index;
 }
 
-uint8_t& Display::reference(const uint16_t address) {
-	bool writable = false, readable = false;
-	const auto index = convertAddress(address, writable, readable);
-	const auto rom = !writable;
-	return rom ? m_temporary = m_registers[index].raw : m_registers[index].raw;
+EightBit::MemoryMapping Display::mapping(const uint16_t address) {
+	return { m_registers, 0, addressMask(), convertAddress(address) };
 }
 
 void Display::Bus_WritingByte(const EightBit::EventArgs& e) {

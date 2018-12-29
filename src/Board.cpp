@@ -10,7 +10,7 @@ Board::Board(const Configuration& configuration, const ColourPalette& colours)
 : m_cpu(*this),
   m_ppu(*this, colours),
   m_symbols(""),
-  m_disassembler(m_cpu, m_symbols),
+  m_disassembler(*this, m_cpu, m_symbols),
   m_configuration(configuration) {
 	if (m_configuration.isDebugMode())
 		CPU().ExecutingInstruction.connect(std::bind(&Board::Cpu_ExecutingInstruction_Debug, this, std::placeholders::_1));
@@ -27,18 +27,20 @@ void Board::reset() {
 	CPU().reset();
 }
 
-uint8_t& Board::reference(uint16_t address) {
+void Board::initialise() {}
+
+EightBit::MemoryMapping Board::mapping(const uint16_t address) {
 
 	if (address < Display::PPU_START)
-		return RAM().reference(address & 0x7ff);
+		return { RAM(), 0x0000, 0x7ff, EightBit::MemoryMapping::AccessLevel::ReadWrite };
 
 	if (address < Display::PPU_END)
-		return PPU().reference(address);
+		return PPU().mapping(address);
 
 	if (address < 0x4020)
-		return IO().reference(address - Display::PPU_END);
+		return { IO(), Display::PPU_END, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadWrite };
 
-	return cartridge().reference(address);
+	return cartridge().mapping(address);
 }
 
 void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
