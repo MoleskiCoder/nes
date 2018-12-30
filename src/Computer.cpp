@@ -88,12 +88,13 @@ void Computer::run() {
 
 	m_board.reset();
 
-	// Nestest...
+#ifdef NESTEST
 	cpu.raise(cpu.RESET());
 	cpu.PC().word = 0xC000;	// Hack!!
 	cpu.X() = 0x00;			// Hack!!
 	cpu.P() |= 0x04;		// Hack!!
 	cpu.S() = 0xFD;			// Hack!!
+#endif
 
 	auto cycles = 0;
 

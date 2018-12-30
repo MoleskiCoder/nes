@@ -18,17 +18,21 @@ int main(int, char*[])
 
 	const std::string romDirectory = "roms/";
 
-	// Mapper 0
-	
+#ifdef NESTEST
+
 	computer.plug(romDirectory + "/nestest.nes");	// pass
 	
-	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/01-basics.nes");		// pass
+#else
+
+	// Mapper 0
+
+	computer.plug(romDirectory + "/instr_test-v5/rom_singles/01-basics.nes");		// pass
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/02-implied.nes");	// pass
-	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/03-immediate.nes");	// illegal instruction failures
+	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/03-immediate.nes");	// pass
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/04-zero_page.nes");	// pass
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/05-zp_xy.nes");		// pass
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/06-absolute.nes");	// pass
-	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/07-abs_xy.nes");		// unimplemented exception
+	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/07-abs_xy.nes");		// illegal instruction failures (9C,SYA 9E,SXA)
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/08-ind_x.nes");		// pass
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/09-ind_y.nes");		// pass
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/10-branches.nes");	// pass
@@ -42,7 +46,7 @@ int main(int, char*[])
 	// Mapper 1?
 
 	//computer.plug(romDirectory + "/instr_test-v5/official_only.nes");				// pass
-	//computer.plug(romDirectory + "/instr_test-v5/all_instrs.nes");				// fail
+	computer.plug(romDirectory + "/instr_test-v5/all_instrs.nes");				// fail
 
 	// Unknown
 	//computer.plug(romDirectory + "/blargg_ppu_tests_2005.09.15b/palette_ram.nes");		// pass
@@ -60,6 +64,8 @@ int main(int, char*[])
 	//computer.plug(romDirectory + "/Pac-Mania (USA) (Unl).nes");
 	//computer.plug(romDirectory + "/Super Mario Bros (E).nes");
 	//computer.plug(romDirectory + "/Donkey Kong Classics (U).nes");
+
+#endif
 
 	try {
 		computer.run();
