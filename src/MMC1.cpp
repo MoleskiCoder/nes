@@ -24,7 +24,7 @@ MMC1::MMC1(EightBit::Bus& bus, const NesFile& nesFile)
 
 	resetRegisters();
 
-	bus.WrittenByte.connect(std::bind(&MMC1::Bus_WrittenByte, this, std::placeholders::_1));
+	bus.WritingByte.connect(std::bind(&MMC1::Bus_WritingByte, this, std::placeholders::_1));
 }
 
 void MMC1::resetRegisters() {
@@ -57,7 +57,7 @@ EightBit::MemoryMapping MMC1::mapping(const uint16_t address) {
 	return { PRG()[highBank], 0xc000, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadOnly };
 }
 
-void MMC1::Bus_WrittenByte(const EightBit::EventArgs& e) {
+void MMC1::Bus_WritingByte(const EightBit::EventArgs& e) {
 
 	const auto address = m_bus.ADDRESS().word;
 	if (LIKELY(address < 0x8000))

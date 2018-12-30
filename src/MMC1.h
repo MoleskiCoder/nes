@@ -20,7 +20,7 @@ public:
 	virtual EightBit::MemoryMapping mapping(uint16_t address) final;
 
 private:
-	void Bus_WrittenByte(const EightBit::EventArgs& e);
+	void Bus_WritingByte(const EightBit::EventArgs& e);
 
 	void resetRegisters();
 
