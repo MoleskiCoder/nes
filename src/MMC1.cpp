@@ -40,7 +40,7 @@ EightBit::MemoryMapping MMC1::mapping(const uint16_t address) {
 		return { m_unused6000, 0, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadOnly };
 
 	if (address < 0x8000)
-		return { PRGRAM(), 0, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadWrite };
+		return { PRGRAM(), 0x6000, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadWrite };
 
 	const auto register0 = m_controls[0].decoded0;
 	const auto prgRomBankMode = (register0_t::prg_rom_bank_mode_t)(register0.prgRomBankMode);
