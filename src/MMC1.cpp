@@ -14,12 +14,12 @@ MMC1::MMC1(EightBit::Bus& bus, const NesFile& nesFile)
 
 	const auto sizePRGROM = nesFile.getSizePRGROM();
 	PRG().resize(sizePRGROM);
-	for (size_t i = 0; i != sizePRGROM; ++i)
+	for (int i = 0; i != sizePRGROM; ++i)
 		PRG()[i].load(content, 0, 16 + 0x4000 * i, 0x4000);
 
 	const auto sizeCHRROM = nesFile.getSizeCHRROM();
 	CHR().resize(sizeCHRROM);
-	for (size_t i = 0; i != sizeCHRROM; ++i)
+	for (int i = 0; i != sizeCHRROM; ++i)
 		CHR()[i].load(content, 0, 16 + 0x4000 * sizePRGROM + 0x2000 * i, 0x2000);
 
 	resetRegisters();

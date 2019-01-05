@@ -113,7 +113,4 @@ private:
 	uint8_t m_shiftRegister : 5;
 
 	std::array<register_t, 4> m_controls;
-
-	size_t m_lowPRGBank;
-	size_t m_highPRGBank;
 };

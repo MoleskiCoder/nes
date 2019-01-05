@@ -166,8 +166,8 @@ private:
 		status_register_t decodedPPUSTATUS;
 	};
 
-	register_t access(const size_t i) const { return { m_registers.peek(i) }; }
-	register_t& access(const size_t i) { return (register_t&)m_registers.reference(i); }
+	register_t access(const uint16_t i) const { return { m_registers.peek(i) }; }
+	register_t& access(const uint16_t i) { return (register_t&)m_registers.reference(i); }
 
 	control_register_1_t PPUCTRL() const { return access(idxPPUCTRL).decodedPPUCTRL; }
 	control_register_1_t& PPUCTRL() { return access(idxPPUCTRL).decodedPPUCTRL; }
