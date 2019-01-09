@@ -25,6 +25,10 @@ void Board::plug(const std::string& path) {
 void Board::reset() {
 	PPU().initialise();
 	CPU().reset();
+	CPU().raise(CPU().NMI());
+	CPU().raise(CPU().IRQ());
+	CPU().raise(CPU().SO());
+	CPU().raise(CPU().RDY());
 }
 
 void Board::initialise() {}
@@ -61,6 +65,18 @@ void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
 	std::cout << "SP:" << m_disassembler.dump_ByteValue(CPU().S()) << " ";
 
 	std::cout << "CYC:" << std::setw(3) << std::setfill(' ') << (m_totalCPUCycles * PPUCyclesPerCPUCycle) % PPUCyclesPerScanLine;
+
+	const bool reset = EightBit::Chip::lowered(CPU().RESET());
+	const bool irq = EightBit::Chip::lowered(CPU().IRQ());
+	const bool nmi = EightBit::Chip::lowered(CPU().NMI());
+
+	std::cout << "\t";
+	if (reset)
+		std::cout << "RESET ";
+	if (irq)
+		std::cout << "IRQ ";
+	if (nmi)
+		std::cout << "NMI ";
 
 	std::cout << std::endl;
 }
