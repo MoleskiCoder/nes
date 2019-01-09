@@ -25,10 +25,6 @@ void Board::plug(const std::string& path) {
 void Board::reset() {
 	PPU().initialise();
 	CPU().reset();
-	CPU().raise(CPU().NMI());
-	CPU().raise(CPU().IRQ());
-	CPU().raise(CPU().SO());
-	CPU().raise(CPU().RDY());
 }
 
 void Board::initialise() {}
