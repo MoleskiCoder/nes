@@ -45,7 +45,9 @@ public:
 	Cartridge& cartridge() { return *m_cartridge; }
 
 	void plug(const std::string& path);
-	void reset();
+
+	void raisePOWER() override;
+	void lowerPOWER() override;
 
 	int runScanLinesRaster();
 	int runScanLinesVBlank();

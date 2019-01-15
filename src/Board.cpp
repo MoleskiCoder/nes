@@ -22,9 +22,18 @@ void Board::plug(const std::string& path) {
 	m_cartridge.reset(new Cartridge(*this, path));
 }
 
-void Board::reset() {
+void Board::raisePOWER() {
 	PPU().initialise();
-	CPU().reset();
+	CPU().raisePOWER();
+	CPU().lowerRESET();
+	CPU().raiseINT();
+	CPU().raiseNMI();
+	CPU().raiseSO();
+	CPU().raiseRDY();
+}
+
+void Board::lowerPOWER() {
+	CPU().lowerPOWER();
 }
 
 void Board::initialise() {}
@@ -63,7 +72,7 @@ void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
 	std::cout << "CYC:" << std::setw(3) << std::setfill(' ') << (m_totalCPUCycles * PPUCyclesPerCPUCycle) % PPUCyclesPerScanLine;
 
 	const bool reset = EightBit::Chip::lowered(CPU().RESET());
-	const bool irq = EightBit::Chip::lowered(CPU().IRQ());
+	const bool irq = EightBit::Chip::lowered(CPU().INT());
 	const bool nmi = EightBit::Chip::lowered(CPU().NMI());
 
 	std::cout << "\t";

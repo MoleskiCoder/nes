@@ -26,7 +26,7 @@ int main(int, char*[])
 
 	// Mapper 0
 
-	computer.plug(romDirectory + "/instr_test-v5/rom_singles/01-basics.nes");		// pass
+	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/01-basics.nes");		// pass
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/02-implied.nes");	// pass
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/03-immediate.nes");	// pass
 	//computer.plug(romDirectory + "/instr_test-v5/rom_singles/04-zero_page.nes");	// pass
@@ -45,8 +45,8 @@ int main(int, char*[])
 	
 	// Mapper 1?
 
-	//computer.plug(romDirectory + "/instr_test-v5/official_only.nes");				// pass
-	computer.plug(romDirectory + "/instr_test-v5/all_instrs.nes");				// fail
+	computer.plug(romDirectory + "/instr_test-v5/official_only.nes");				// pass
+	//computer.plug(romDirectory + "/instr_test-v5/all_instrs.nes");				// fail
 
 	// Unknown
 	//computer.plug(romDirectory + "/blargg_ppu_tests_2005.09.15b/palette_ram.nes");		// pass

@@ -84,12 +84,10 @@ void Computer::run() {
 
 	auto& cpu = m_board.CPU();
 
-	cpu.powerOn();
-
-	m_board.reset();
+	m_board.raisePOWER();
 
 #ifdef NESTEST
-	cpu.raise(cpu.RESET());
+	cpu.raiseRESET();
 	cpu.PC().word = 0xC000;	// Hack!!
 	cpu.X() = 0x00;			// Hack!!
 	cpu.P() |= 0x04;		// Hack!!
@@ -106,7 +104,7 @@ void Computer::run() {
 		while (::SDL_PollEvent(&e)) {
 			switch (e.type) {
 			case SDL_QUIT:
-				cpu.powerOff();
+				m_board.lowerPOWER();
 				break;
 			}
 		}
