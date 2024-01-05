@@ -16,7 +16,11 @@ public:
 	void setDrawGraphics(bool value) { m_drawGraphics = value; }
 
 private:
+#ifdef NESTEST
+	bool m_debugMode = true;
+#else
 	bool m_debugMode = false;
+#endif
 	bool m_profileMode = false;
 	bool m_drawGraphics = true;
 };

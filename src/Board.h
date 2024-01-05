@@ -74,11 +74,6 @@ private:
 
 	bool m_oamdmaActive = false;
 
-	void Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu);
-	void Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu);
-
-	void Bus_WrittenByte(const EightBit::EventArgs& e);
-
 	int run(int limit);
 	int runScanLine();
 	int runScanLines(int lines);

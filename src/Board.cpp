@@ -12,10 +12,54 @@ Board::Board(const Configuration& configuration, const ColourPalette& colours)
   m_symbols(""),
   m_disassembler(*this, m_cpu, m_symbols),
   m_configuration(configuration) {
-	if (m_configuration.isDebugMode())
-		CPU().ExecutingInstruction.connect(std::bind(&Board::Cpu_ExecutingInstruction_Debug, this, std::placeholders::_1));
-	CPU().ExecutedInstruction.connect(std::bind(&Board::Cpu_ExecutedInstruction, this, std::placeholders::_1));
-	WrittenByte.connect(std::bind(&Board::Bus_WrittenByte, this, std::placeholders::_1));
+	if (m_configuration.isDebugMode()) {
+
+		CPU().ExecutingInstruction.connect([this](EightBit::MOS6502& cpu) {
+
+			auto address = CPU().PC().word;
+			auto cell = peek(address);
+
+			std::cout << m_disassembler.dump_WordValue(address);
+			std::cout << "  ";
+			std::cout << m_disassembler.disassemble(address);
+
+			std::cout << "\t\t";
+
+			std::cout << "A:" << m_disassembler.dump_ByteValue(CPU().A()) << " ";
+			std::cout << "X:" << m_disassembler.dump_ByteValue(CPU().X()) << " ";
+			std::cout << "Y:" << m_disassembler.dump_ByteValue(CPU().Y()) << " ";
+			std::cout << "P:" << m_disassembler.dump_ByteValue(CPU().P()) << " ";
+			std::cout << "SP:" << m_disassembler.dump_ByteValue(CPU().S()) << " ";
+
+			std::cout << "CYC:" << std::setw(3) << std::setfill(' ') << (m_totalCPUCycles * PPUCyclesPerCPUCycle) % PPUCyclesPerScanLine;
+
+			const bool reset = EightBit::Chip::lowered(CPU().RESET());
+			const bool irq = EightBit::Chip::lowered(CPU().INT());
+			const bool nmi = EightBit::Chip::lowered(CPU().NMI());
+
+			std::cout << "\t";
+			if (reset)
+				std::cout << "RESET ";
+			if (irq)
+				std::cout << "IRQ ";
+			if (nmi)
+				std::cout << "NMI ";
+
+			std::cout << "\n";
+		});
+
+	}
+
+	CPU().ExecutedInstruction.connect([this](EightBit::MOS6502& cpu) {
+		m_totalCPUCycles += cpu.cycles();
+	});
+
+	WrittenByte.connect([this](const EightBit::EventArgs& e) {
+		if (UNLIKELY(ADDRESS().word == 0x4014)) {	// OAMDMA
+			PPU().triggerOAMDMA(DATA());
+			m_oamdmaActive = true;
+		}
+	});
 }
 
 void Board::plug(const std::string& path) {
@@ -50,44 +94,6 @@ EightBit::MemoryMapping Board::mapping(const uint16_t address) noexcept {
 		return { IO(), Display::PPU_END, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadWrite };
 
 	return cartridge().mapping(address);
-}
-
-void Board::Cpu_ExecutingInstruction_Debug(const EightBit::MOS6502& cpu) {
-
-	auto address = CPU().PC().word;
-	auto cell = peek(address);
-
-	std::cout << m_disassembler.dump_WordValue(address);
-	std::cout << "  ";
-	std::cout << m_disassembler.disassemble(address);
-
-	std::cout << "\t\t";
-
-	std::cout << "A:" << m_disassembler.dump_ByteValue(CPU().A()) << " ";
-	std::cout << "X:" << m_disassembler.dump_ByteValue(CPU().X()) << " ";
-	std::cout << "Y:" << m_disassembler.dump_ByteValue(CPU().Y()) << " ";
-	std::cout << "P:" << m_disassembler.dump_ByteValue(CPU().P()) << " ";
-	std::cout << "SP:" << m_disassembler.dump_ByteValue(CPU().S()) << " ";
-
-	std::cout << "CYC:" << std::setw(3) << std::setfill(' ') << (m_totalCPUCycles * PPUCyclesPerCPUCycle) % PPUCyclesPerScanLine;
-
-	const bool reset = EightBit::Chip::lowered(CPU().RESET());
-	const bool irq = EightBit::Chip::lowered(CPU().INT());
-	const bool nmi = EightBit::Chip::lowered(CPU().NMI());
-
-	std::cout << "\t";
-	if (reset)
-		std::cout << "RESET ";
-	if (irq)
-		std::cout << "IRQ ";
-	if (nmi)
-		std::cout << "NMI ";
-
-	std::cout << std::endl;
-}
-
-void Board::Cpu_ExecutedInstruction(const EightBit::MOS6502& cpu) {
-	m_totalCPUCycles += CPU().cycles();
 }
 
 int Board::run(const int limit) {
@@ -136,11 +142,4 @@ int Board::runScanLinesVBlank() {
 	PPU().clearVBlank();
 	returned += runScanLines(ScanLinesVBlankLatency);
 	return returned;
-}
-
-void Board::Bus_WrittenByte(const EightBit::EventArgs& e) {
-	if (UNLIKELY(ADDRESS().word == 0x4014)) {	// OAMDMA
-		PPU().triggerOAMDMA(DATA());
-		m_oamdmaActive = true;
-	}
 }
