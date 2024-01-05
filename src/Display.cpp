@@ -107,7 +107,7 @@ EightBit::MemoryMapping::AccessLevel Display::convertAddress(const uint16_t addr
 	}
 }
 
-EightBit::MemoryMapping Display::mapping(const uint16_t address) {
+EightBit::MemoryMapping Display::mapping(const uint16_t address) noexcept {
 	return { m_registers, 0, addressMask(), convertAddress(address) };
 }
 

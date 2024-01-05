@@ -12,7 +12,7 @@ class Cartridge final : public EightBit::Mapper {
 public:
 	Cartridge(EightBit::Bus& bus, const std::string& path);
 
-	virtual EightBit::MemoryMapping mapping(uint16_t address) final;
+	EightBit::MemoryMapping mapping(uint16_t address) noexcept final;
 
 private:
 	EightBit::Bus& m_bus;

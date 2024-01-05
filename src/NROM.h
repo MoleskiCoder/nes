@@ -14,7 +14,7 @@ class NROM final : public EightBit::Mapper {
 public:
 	NROM(const NesFile& nesFile);
 
-	virtual EightBit::MemoryMapping mapping(uint16_t address) final;
+	EightBit::MemoryMapping mapping(uint16_t address) noexcept final;
 
 private:
 	auto& PRG() { return m_prg; }

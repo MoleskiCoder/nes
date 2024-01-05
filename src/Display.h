@@ -34,7 +34,7 @@ public:
 
 	Display(EightBit::Bus& bus, const ColourPalette& palette);
 
-	virtual EightBit::MemoryMapping mapping(uint16_t address) final;
+	EightBit::MemoryMapping mapping(uint16_t address) noexcept final;
 
 	bool nmi() const { return PPUCTRL().nmi(); }
 

@@ -34,7 +34,7 @@ void MMC1::resetRegisters() {
 	m_controls[3].decoded3.reset();
 }
 
-EightBit::MemoryMapping MMC1::mapping(const uint16_t address) {
+EightBit::MemoryMapping MMC1::mapping(const uint16_t address) noexcept {
 
 	if (address < 0x6000)
 		return { m_unused6000, 0, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadOnly };

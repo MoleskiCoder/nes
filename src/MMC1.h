@@ -17,7 +17,7 @@ class MMC1 final : public EightBit::Mapper {
 public:
 	MMC1(EightBit::Bus& bus, const NesFile& nesFile);
 
-	virtual EightBit::MemoryMapping mapping(uint16_t address) final;
+	EightBit::MemoryMapping mapping(uint16_t address) noexcept final;
 
 private:
 	void Bus_WritingByte(const EightBit::EventArgs& e);

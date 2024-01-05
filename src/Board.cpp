@@ -22,7 +22,7 @@ void Board::plug(const std::string& path) {
 	m_cartridge.reset(new Cartridge(*this, path));
 }
 
-void Board::raisePOWER() {
+void Board::raisePOWER() noexcept {
 	PPU().initialise();
 	CPU().raisePOWER();
 	CPU().lowerRESET();
@@ -32,13 +32,13 @@ void Board::raisePOWER() {
 	CPU().raiseRDY();
 }
 
-void Board::lowerPOWER() {
+void Board::lowerPOWER() noexcept {
 	CPU().lowerPOWER();
 }
 
 void Board::initialise() {}
 
-EightBit::MemoryMapping Board::mapping(const uint16_t address) {
+EightBit::MemoryMapping Board::mapping(const uint16_t address) noexcept {
 
 	if (address < Display::PPU_START)
 		return { RAM(), 0x0000, 0x7ff, EightBit::MemoryMapping::AccessLevel::ReadWrite };

@@ -46,14 +46,14 @@ public:
 
 	void plug(const std::string& path);
 
-	void raisePOWER() override;
-	void lowerPOWER() override;
+	void raisePOWER() noexcept override;
+	void lowerPOWER() noexcept override;
 
 	int runScanLinesRaster();
 	int runScanLinesVBlank();
 
-	virtual void initialise() final;
-	virtual EightBit::MemoryMapping mapping(uint16_t address) final;
+	void initialise() final;
+	EightBit::MemoryMapping mapping(uint16_t address) noexcept final;
 
 private:
 	EightBit::Ricoh2A03 m_cpu;

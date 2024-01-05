@@ -20,7 +20,7 @@ NROM::NROM(const NesFile& nesFile) {
 		CHR()[i].load(content, 0, 16 + 0x4000 * sizePRGROM + 0x2000 * i, 0x2000);
 }
 
-EightBit::MemoryMapping NROM::mapping(const uint16_t address) {
+EightBit::MemoryMapping NROM::mapping(const uint16_t address) noexcept {
 
 	if (address < 0x8000)
 		return { m_unused8000, 0, 0xffff, EightBit::MemoryMapping::AccessLevel::ReadOnly };
